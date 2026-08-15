@@ -1,0 +1,20 @@
+{
+  "$schema": "./schemas/dependencies.schema.json",
+  "dependencies": [
+    {
+      "id": "sqljs",
+      "package": "sql.js",
+      "version": "1.14.1",
+      "license": "MIT",
+      "homepage": "https://github.com/sql-js/sql.js",
+      "assets": [
+        {
+          "key": "asm",
+          "path": "dist/sql-asm.js",
+          "mime": "text/javascript",
+          "stripSourceMapComment": true
+        }
+      ]
+    }
+  ]
+}

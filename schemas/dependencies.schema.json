@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "dependencies"
+  ],
+  "properties": {
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "package",
+          "version",
+          "assets"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "license": {
+            "type": "string"
+          },
+          "homepage": {
+            "type": "string"
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "path"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "mime": {
+                  "type": "string"
+                },
+                "stripSourceMapComment": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

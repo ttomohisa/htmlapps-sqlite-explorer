@@ -1,0 +1,22 @@
+{
+  "$schema": "./schemas/app-config.schema.json",
+  "name": "SQLite Explorer",
+  "nameJa": "SQLite Explorer",
+  "slug": "sqlite-explorer",
+  "version": "1.0",
+  "description": "Open, understand, profile, and query SQLite databases entirely in your browser.",
+  "descriptionJa": "SQLiteファイルの全体像・関係・列プロファイル・SQLをブラウザー内だけで確認できるローカルツールです。",
+  "defaultLanguage": "auto",
+  "repository": {
+    "owner": "ttomohisa",
+    "name": "htmlapps-sqlite-explorer"
+  },
+  "build": {
+    "output": "dist/index.html",
+    "blockRuntimeNetwork": true,
+    "selfExtract": {
+      "enabled": true,
+      "output": "dist/index.self-extract.html"
+    }
+  }
+}

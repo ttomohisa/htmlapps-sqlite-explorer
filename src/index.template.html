@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f5f5f2">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>SQLite Explorer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231c6b5a'/%3E%3Cellipse cx='32' cy='18' rx='17' ry='8' fill='none' stroke='white' stroke-width='4'/%3E%3Cpath d='M15 18v14c0 4.4 7.6 8 17 8s17-3.6 17-8V18M15 32v14c0 4.4 7.6 8 17 8s17-3.6 17-8V32' fill='none' stroke='white' stroke-width='4'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg:#f5f5f2; --surface:#fff; --surface-muted:#f0f0ed; --surface-hover:#e9e9e5;
+      --text:#20211f; --muted:#666963; --line:#dadbd6; --line-strong:#bfc1ba;
+      --accent:#16624f; --accent-hover:#0e503f; --accent-soft:#e1f0ea; --danger:#b3261e;
+      --warning:#8a5a00; --warning-soft:#fff4d6; --info:#2c5d8a; --focus:#4d8bc7;
+      --shadow-sm:0 1px 2px rgba(25,28,24,.08),0 1px 6px rgba(25,28,24,.04);
+      --shadow-md:0 14px 38px rgba(25,28,24,.12); --radius:12px; --header-height:66px;
+      --sidebar:246px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    }
+    *{box-sizing:border-box} html{min-height:100%;background:var(--bg);scroll-behavior:smooth}
+    body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+    button,input,textarea,select{font:inherit} button{color:inherit} button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid color-mix(in srgb,var(--focus) 55%,transparent);outline-offset:2px}
+    .app-header{position:sticky;z-index:40;top:0;min-height:var(--header-height);border-bottom:1px solid color-mix(in srgb,var(--line) 82%,transparent);background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(16px) saturate(1.2)}
+    .header-inner{width:min(1440px,100%);min-height:var(--header-height);margin:0 auto;padding:10px clamp(14px,2.4vw,28px);display:flex;align-items:center;gap:14px}
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-mark{display:grid;place-items:center;width:38px;height:38px;flex:0 0 auto;border-radius:11px;background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}.brand-mark svg{width:22px;height:22px}.brand-copy{min-width:0}.brand-name{margin:0;font-size:17px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.version-badge{display:inline-flex;margin-left:7px;padding:1px 6px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:var(--surface-muted);font-size:10px;font-weight:700;vertical-align:2px}.brand-meta{margin:2px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .header-actions{margin-left:auto;display:flex;align-items:center;gap:12px}.language-button,.header-icon-button{border:0;background:transparent;color:var(--muted);font-weight:750;cursor:pointer}.language-button{padding:5px 1px;font-size:12px}.header-icon-button{display:grid;place-items:center;padding:5px 1px}.header-icon-button:hover,.language-button:hover{color:var(--text)}.header-icon-button svg{width:20px;height:20px}
+    .file-chip{display:flex;align-items:center;gap:8px;max-width:340px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--shadow-sm);font-size:12px}.file-chip[hidden]{display:none}.file-chip-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}.file-chip-size{color:var(--muted);white-space:nowrap}.file-chip button{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:0;display:grid;place-items:center}
+    .button{min-height:40px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-weight:700;cursor:pointer;transition:.16s}.button:hover{border-color:var(--line-strong);background:var(--surface-hover)}.button:active{transform:translateY(1px)}.button.primary{border-color:var(--accent);background:var(--accent);color:#fff}.button.primary:hover{background:var(--accent-hover)}.button.small{min-height:34px;padding:6px 10px;font-size:12px}.button.ghost{border-color:transparent;background:transparent}.button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .app-main{width:min(1440px,100%);margin:0 auto;padding:20px clamp(14px,2.4vw,28px) 70px}
+    .hero{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:2px 2px 16px}.hero h1{margin:0;font-size:clamp(21px,2.7vw,27px);line-height:1.3;letter-spacing:-.025em}.hero p{margin:5px 0 0;max-width:780px;color:var(--muted);font-size:13px}.local-badge{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;margin-top:3px;padding:7px 10px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:999px;color:var(--accent);background:var(--accent-soft);font-size:12px;font-weight:700;white-space:nowrap}.local-badge svg{width:15px;height:15px}
+    .dropzone{min-height:310px;display:grid;place-items:center;padding:24px;border:1.5px dashed var(--line-strong);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-sm);transition:.16s}.dropzone.dragover{border-color:var(--accent);background:var(--accent-soft)}.drop-inner{text-align:center;max-width:560px}.drop-icon{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 18px;border-radius:18px;background:var(--accent-soft);color:var(--accent)}.drop-icon svg{width:34px;height:34px}.drop-inner h2{margin:0;font-size:21px}.drop-inner p{margin:8px 0 18px;color:var(--muted);font-size:13px}.drop-note{margin-top:14px!important;font-size:11px!important}.file-input{display:none}
+    .workspace{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);gap:16px;align-items:start}.workspace[hidden],.dropzone[hidden]{display:none}
+    .sidebar{position:sticky;top:calc(var(--header-height) + 20px);max-height:calc(100dvh - var(--header-height) - 40px);overflow:auto;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm)}.side-section+.side-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.side-title{margin:0 8px 7px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.nav-button,.table-button{width:100%;display:flex;align-items:center;gap:9px;border:0;border-radius:9px;background:transparent;cursor:pointer;text-align:left}.nav-button{padding:9px 10px;font-weight:700}.nav-button:hover,.table-button:hover{background:var(--surface-muted)}.nav-button.active,.table-button.active{background:var(--accent-soft);color:var(--accent)}.nav-button svg{width:17px;height:17px;flex:0 0 auto}.table-button{padding:7px 9px}.table-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.table-count{margin-left:auto;color:var(--muted);font-family:var(--mono);font-size:10px}.table-search{width:100%;margin:0 0 7px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#fbfbf9}
+    .content{min-width:0}.view{display:none}.view.active{display:block}.view-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:13px}.view-head h2{margin:0;font-size:21px;letter-spacing:-.02em}.view-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.view-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .card{border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm)}.card-pad{padding:16px}.metric-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px}.metric{padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}.metric-value{display:block;font-size:23px;font-weight:800;letter-spacing:-.03em}.metric-label{display:block;margin-top:2px;color:var(--muted);font-size:11px}.grid-2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:12px}.grid-equal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;font-size:15px}.section-title small{color:var(--muted);font-size:11px;font-weight:500}
+    .summary-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.summary-item{padding:10px 11px;border-radius:10px;background:var(--surface-muted)}.summary-item span{display:block;color:var(--muted);font-size:10px}.summary-item strong{display:block;margin-top:2px;overflow-wrap:anywhere;font-family:var(--mono);font-size:12px}
+    .scale-table{overflow:hidden;border:1px solid var(--line);border-radius:11px}.scale-head,.scale-row{display:grid;grid-template-columns:minmax(180px,1fr) 82px 58px 58px 58px;align-items:center;column-gap:8px}.scale-head{min-height:32px;padding:0 10px;background:var(--surface-muted);color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.04em}.scale-head span:not(:first-child){text-align:right}.scale-row{width:100%;min-height:49px;padding:7px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;transition:background .14s ease}.scale-row:hover{background:#fafbf9}.scale-row:active{background:var(--surface-muted)}.scale-name{min-width:0}.scale-name-line{display:flex;align-items:center;gap:6px;min-width:0}.scale-table-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--mono);font-size:11px;font-weight:750}.scale-warning{flex:0 0 auto;padding:1px 5px;border-radius:999px;background:var(--warning-soft);color:var(--warning);font-size:8px;font-weight:800}.scale-mini-track{display:block;width:min(190px,100%);height:4px;margin-top:5px;border-radius:99px;background:var(--surface-muted);overflow:hidden}.scale-mini-fill{display:block;height:100%;border-radius:inherit;background:var(--accent)}.scale-number{text-align:right;color:var(--muted);font-family:var(--mono);font-size:10px}.scale-number.primary{color:var(--text);font-weight:800}.scale-footer{display:flex;justify-content:flex-end;margin-top:10px}.scale-all{min-height:30px;padding:4px 2px;border:0;background:transparent;color:var(--accent);font-size:10px;font-weight:800;cursor:pointer}.scale-all:hover{text-decoration:underline}
+    .insight-list{display:grid;gap:8px}.insight{display:flex;gap:10px;padding:10px 11px;border-radius:10px;background:var(--surface-muted)}.insight.warning{background:var(--warning-soft);color:#5e4000}.insight-icon{flex:0 0 auto}.insight strong{display:block;font-size:12px}.insight p{margin:2px 0 0;color:var(--muted);font-size:11px}.insight.warning p{color:#72591f}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);max-height:min(62vh,720px)}table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:12px}th,td{padding:9px 10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;max-width:360px;overflow:hidden;text-overflow:ellipsis}th{position:sticky;top:0;z-index:2;background:#f5f5f2;font-size:10px;text-transform:none;color:var(--muted)}tr:last-child td{border-bottom:0}th:last-child,td:last-child{border-right:0}tbody tr:hover td{background:#fafaf8}.null{color:#999;font-style:italic}.blob{color:var(--info);font-family:var(--mono)}.pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;color:var(--muted);font-size:11px}.pager-buttons{display:flex;gap:7px}
+    .schema-tabs{display:flex;gap:4px;margin-bottom:10px;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface-muted);width:max-content;max-width:100%;overflow:auto}.schema-tab{border:0;border-radius:8px;background:transparent;padding:7px 11px;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}.schema-tab.active{background:var(--surface);box-shadow:var(--shadow-sm)}.schema-panel{display:none}.schema-panel.active{display:block}.schema-sql{margin:0;padding:14px;border-radius:11px;background:#202522;color:#eaf2ed;overflow:auto;font:12px/1.65 var(--mono);white-space:pre-wrap}.erd-wrap{height:620px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:radial-gradient(circle at 1px 1px,#dcded8 1px,transparent 1px);background-size:20px 20px}.erd-svg{display:block;min-width:100%;min-height:100%}.erd-node rect{fill:#fff;stroke:#cfd1ca;stroke-width:1}.erd-node .head{fill:#eef5f1}.erd-node text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#20211f;font-size:11px}.erd-node .name{font-weight:700}.erd-edge{fill:none;stroke:#70817a;stroke-width:1.5}.erd-edge.inferred{stroke:#8a6b25;stroke-dasharray:6 5}.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:10px}.legend-line{display:inline-block;width:28px;border-top:2px solid #70817a;vertical-align:3px}.legend-line.inferred{border-top-color:#8a6b25;border-top-style:dashed}
+    .relation-list{display:grid;gap:8px}.relation-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:10px 11px;border:1px solid var(--line);border-radius:10px}.relation-col{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--mono);font-size:11px}.relation-arrow{color:var(--muted)}.confidence{padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:800}.confidence.inferred{background:var(--warning-soft);color:var(--warning)}
+    .profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.profile-card{padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.profile-name{font-family:var(--mono);font-size:12px;font-weight:800}.type-pill{padding:2px 6px;border-radius:999px;background:var(--surface-muted);color:var(--muted);font:9px var(--mono)}.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.mini-stat{padding:7px;border-radius:8px;background:var(--surface-muted)}.mini-stat strong{display:block;font-size:12px}.mini-stat span{color:var(--muted);font-size:9px}.top-values{display:flex;flex-wrap:wrap;gap:5px}.value-pill{max-width:180px;padding:3px 6px;border:1px solid var(--line);border-radius:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:9px var(--mono)}
+    .query-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:12px}.query-editor{width:100%;min-height:230px;resize:vertical;padding:14px;border:1px solid var(--line);border-radius:11px;background:#202522;color:#edf5f0;font:12px/1.7 var(--mono);tab-size:2}.query-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.read-only-badge{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:10px;font-weight:800}.query-meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:10px}.plan-list{display:grid;gap:7px}.plan-item{padding:9px 10px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--surface-muted);font:10px/1.5 var(--mono)}.empty-state{padding:36px 18px;text-align:center;color:var(--muted)}.empty-state strong{display:block;color:var(--text);font-size:14px}.empty-state p{margin:5px auto 0;max-width:480px;font-size:11px}.error-box{padding:11px 12px;border:1px solid color-mix(in srgb,var(--danger) 35%,var(--line));border-radius:10px;background:#fff0ef;color:var(--danger);font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+    .loading-overlay{position:fixed;z-index:80;inset:0;display:grid;place-items:center;background:rgba(245,245,242,.78);backdrop-filter:blur(5px)}.loading-overlay[hidden]{display:none}.loading-card{min-width:min(340px,calc(100vw - 32px));padding:20px;border:1px solid var(--line);border-radius:15px;background:var(--surface);box-shadow:var(--shadow-md);text-align:center}.spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid var(--surface-muted);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.loading-card strong{display:block}.loading-card span{display:block;margin-top:4px;color:var(--muted);font-size:11px}
+    .toast{position:fixed;right:18px;bottom:18px;z-index:90;max-width:min(380px,calc(100vw - 36px));padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:var(--surface);box-shadow:var(--shadow-md);opacity:0;transform:translateY(12px);pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:translateY(0)}
+    dialog{width:min(640px,calc(100% - 28px));max-height:min(760px,calc(100dvh - 28px));padding:0;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--text);box-shadow:var(--shadow-md)}dialog::backdrop{background:rgba(15,17,14,.52);backdrop-filter:blur(4px)}.dialog-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}.dialog-header h2{margin:0;font-size:17px}.dialog-close{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:9px;background:transparent;cursor:pointer}.dialog-close:hover{background:var(--surface-hover)}.dialog-close svg{width:19px}.dialog-body{padding:20px 20px 28px;overflow:auto;max-height:calc(100dvh - 102px)}.dialog-body h3{margin:23px 0 8px;padding-top:18px;border-top:1px solid var(--line);font-size:14px}.dialog-body h3:first-child{margin-top:0;padding-top:0;border-top:0}.dialog-body p,.dialog-body li{color:var(--muted);font-size:12px;line-height:1.7}.dialog-body ol,.dialog-body ul{padding-left:21px}.dialog-note{padding:10px 11px;border-radius:9px;background:var(--accent-soft);color:var(--text)!important}
+    .mobile-nav{display:none}.mobile-filebar{display:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    footer{width:min(1440px,100%);margin:0 auto;padding:0 clamp(14px,2.4vw,28px) 30px;color:var(--muted);font-size:11px}
+    @media(max-width:1050px){.metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-2,.query-layout{grid-template-columns:1fr}.grid-equal{grid-template-columns:1fr}}
+    @media(max-width:820px){
+      :root{--header-height:58px}.header-inner{padding-block:8px}.brand-mark{width:34px;height:34px;border-radius:10px}.brand-name{font-size:15px}.brand-meta,.header-file{display:none}.app-main{padding-top:14px;padding-bottom:92px}.hero{flex-direction:column;gap:9px}.local-badge{align-self:flex-start}.workspace{display:block}.sidebar{display:none}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-grid{grid-template-columns:1fr}.view-head{align-items:stretch;flex-direction:column}.view-actions{justify-content:flex-start}.mobile-nav{position:fixed;z-index:50;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(16px)}.mobile-nav[hidden]{display:none}.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:48px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:9px;font-weight:700}.mobile-nav button.active{color:var(--accent);background:var(--accent-soft)}.mobile-nav svg{width:19px;height:19px}.mobile-filebar{display:flex;align-items:center;gap:9px;margin-bottom:10px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}.mobile-filebar[hidden]{display:none}.mobile-filebar .file-chip-name{flex:1}.erd-wrap{height:520px}
+    }
+    @media(max-width:520px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{padding:12px}.metric-value{font-size:20px}.dropzone{min-height:360px}.summary-list{grid-template-columns:1fr}.relation-row{grid-template-columns:1fr auto 1fr}.confidence{grid-column:1/-1;justify-self:start}.query-toolbar{align-items:stretch;flex-direction:column}.query-toolbar .button{width:100%}.scale-head,.scale-row{grid-template-columns:minmax(96px,1fr) 62px 34px 38px 30px;column-gap:5px;padding-left:8px;padding-right:8px}.scale-head{font-size:8px}.scale-table-name{font-size:10px}.scale-number{font-size:9px}.scale-warning{font-size:7px}.scale-mini-track{display:none}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>
+        </div>
+        <div class="brand-copy">
+          <p class="brand-name"><span id="brandName">SQLite Explorer</span><span class="version-badge" id="versionBadge">v1.0</span></p>
+          <p class="brand-meta" data-i18n="brandMeta">単一HTML・ローカル処理・読み取り専用</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="file-chip header-file" id="headerFile" hidden><span class="file-chip-name" id="headerFileName"></span><span class="file-chip-size" id="headerFileSize"></span><button id="replaceFileHeader" type="button" aria-label="Replace database">×</button></div>
+        <button class="language-button" id="languageButton" type="button" aria-label="Switch language">EN</button>
+        <button class="header-icon-button" id="helpButton" type="button" data-i18n-title="helpTitle" data-i18n-aria-label="helpTitle" aria-label="使い方と注意事項">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.35 2.35 0 1 1 3.72 1.9c-.92.67-1.52 1.12-1.52 2.1M12 17h.01"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="hero">
+      <div>
+        <h1 data-i18n="introTitle">SQLiteファイルを、開くだけで理解する。</h1>
+        <p data-i18n="introBody">テーブル、関係、列の傾向、クエリプランまでブラウザー内で解析します。元のデータベースは変更しません。</p>
+      </div>
+      <div class="local-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6z"/><path d="m9 12 2 2 4-5"/></svg>
+        <span data-i18n="localBadge">実行時通信なし</span>
+      </div>
+    </section>
+
+    <section class="dropzone" id="dropzone" aria-labelledby="dropTitle">
+      <div class="drop-inner">
+        <div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></div>
+        <h2 id="dropTitle" data-i18n="dropTitle">SQLiteファイルをドロップ</h2>
+        <p data-i18n="dropBody">.db / .sqlite / .sqlite3 を選択してください。ファイルは外部へ送信されません。</p>
+        <button class="button primary" id="chooseFile" type="button" data-i18n="chooseFile">ファイルを選択</button>
+        <input class="file-input" id="fileInput" type="file" accept=".db,.sqlite,.sqlite3,.db3,application/x-sqlite3">
+        <p class="drop-note" data-i18n="memoryNote">sql.js はデータベース全体をメモリへ読み込みます。大きなファイルでは端末性能の影響を受けます。</p>
+      </div>
+    </section>
+
+    <div class="mobile-filebar" id="mobileFilebar" hidden><span class="file-chip-name" id="mobileFileName"></span><span class="file-chip-size" id="mobileFileSize"></span><button class="button small" id="replaceFileMobile" type="button" data-i18n="replace">変更</button></div>
+
+    <section class="workspace" id="workspace" hidden>
+      <aside class="sidebar" aria-label="Navigation">
+        <div class="side-section">
+          <button class="nav-button active" data-view="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg><span data-i18n="navOverview">概要</span></button>
+          <button class="nav-button" data-view="tables"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4zM4 10h16M9 6v12"/></svg><span data-i18n="navTables">データ</span></button>
+          <button class="nav-button" data-view="schema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="7" height="6" rx="1"/><rect x="14" y="14" width="7" height="6" rx="1"/><path d="M10 7h4a3 3 0 0 1 3 3v4"/></svg><span data-i18n="navSchema">スキーマ</span></button>
+          <button class="nav-button" data-view="analyze"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg><span data-i18n="navAnalyze">解析</span></button>
+          <button class="nav-button" data-view="query"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 7 4 5-4 5M11 17h8"/></svg><span data-i18n="navQuery">SQL</span></button>
+        </div>
+        <div class="side-section">
+          <p class="side-title" data-i18n="tablesLabel">Tables</p>
+          <input class="table-search" id="tableSearch" type="search" data-i18n-placeholder="filterTables" placeholder="テーブルを絞り込み">
+          <div id="tableList"></div>
+        </div>
+        <div class="side-section" id="viewListSection" hidden>
+          <p class="side-title" data-i18n="viewsLabel">Views</p>
+          <div id="viewList"></div>
+        </div>
+      </aside>
+
+      <div class="content">
+        <section class="view active" id="view-overview">
+          <div class="view-head"><div><h2 data-i18n="overviewTitle">Database Overview</h2><p id="overviewSubtitle"></p></div><div class="view-actions"><button class="button small" id="runQuickCheck" type="button" data-i18n="quickCheck">Quick check</button></div></div>
+          <div class="metric-grid">
+            <div class="metric"><strong class="metric-value" id="metricTables">—</strong><span class="metric-label" data-i18n="tablesLabel">Tables</span></div>
+            <div class="metric"><strong class="metric-value" id="metricViews">—</strong><span class="metric-label" data-i18n="viewsLabel">Views</span></div>
+            <div class="metric"><strong class="metric-value" id="metricIndexes">—</strong><span class="metric-label" data-i18n="indexesLabel">Indexes</span></div>
+            <div class="metric"><strong class="metric-value" id="metricRows">—</strong><span class="metric-label" data-i18n="rowsLabel">Rows</span></div>
+            <div class="metric"><strong class="metric-value" id="metricRelations">—</strong><span class="metric-label" data-i18n="relationsLabel">Relations</span></div>
+          </div>
+          <div class="grid-2">
+            <div class="card card-pad"><h3 class="section-title"><span data-i18n="tableScale">Table scale</span><small data-i18n="tableScaleHint">largest first</small></h3><div id="largestTables"></div></div>
+            <div class="card card-pad"><h3 class="section-title" data-i18n="databaseInfo">Database info</h3><div class="summary-list" id="databaseInfo"></div></div>
+          </div>
+          <div class="grid-equal" style="margin-top:12px">
+            <div class="card card-pad"><h3 class="section-title" data-i18n="relationships">Relationships</h3><div id="overviewRelations"></div></div>
+            <div class="card card-pad"><h3 class="section-title" data-i18n="observations">Observations</h3><div class="insight-list" id="insights"></div></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-tables">
+          <div class="view-head"><div><h2 id="dataTitle">Table</h2><p id="dataSubtitle"></p></div><div class="view-actions"><select id="dataTableSelect" class="button small" aria-label="Select table"></select><button class="button small" id="exportTableCsv" type="button">CSV</button><button class="button small" id="exportTableJson" type="button">JSON</button></div></div>
+          <div id="dataContainer"><div class="empty-state"><strong data-i18n="selectTableTitle">テーブルを選択してください</strong><p data-i18n="selectTableBody">左側の一覧からテーブルを選ぶと、データをページ単位で表示します。</p></div></div>
+          <div class="pagination" id="pagination" hidden><span id="pageInfo"></span><div class="pager-buttons"><button class="button small" id="prevPage" type="button" data-i18n="previous">前へ</button><button class="button small" id="nextPage" type="button" data-i18n="next">次へ</button></div></div>
+        </section>
+
+        <section class="view" id="view-schema">
+          <div class="view-head"><div><h2 data-i18n="schemaTitle">Schema & Relationships</h2><p data-i18n="schemaBody">定義済みの外部キーと、列名・型・値の重なりから推定した関係を可視化します。</p></div></div>
+          <div class="schema-tabs">
+            <button class="schema-tab active" data-schema-panel="diagram" type="button" data-i18n="diagram">ER diagram</button>
+            <button class="schema-tab" data-schema-panel="relations" type="button" data-i18n="relationshipList">Relationships</button>
+            <button class="schema-tab" data-schema-panel="ddl" type="button">DDL</button>
+          </div>
+          <div class="schema-panel active" id="schema-diagram"><div class="card card-pad"><div class="legend" style="margin-bottom:10px"><span><i class="legend-line"></i> <span data-i18n="definedFk">Defined FK</span></span><span><i class="legend-line inferred"></i> <span data-i18n="inferredFk">Inferred</span></span></div><div class="erd-wrap"><svg class="erd-svg" id="erdSvg"></svg></div></div></div>
+          <div class="schema-panel" id="schema-relations"><div class="card card-pad"><div class="relation-list" id="relationList"></div></div></div>
+          <div class="schema-panel" id="schema-ddl"><div class="card card-pad"><pre class="schema-sql" id="ddlText"></pre></div></div>
+        </section>
+
+        <section class="view" id="view-analyze">
+          <div class="view-head"><div><h2 data-i18n="analyzeTitle">Column Profiler</h2><p id="analyzeSubtitle" data-i18n="analyzeBody">列ごとのNULL率、ユニーク数、代表値を確認します。</p></div><div class="view-actions"><select id="analyzeTableSelect" class="button small" aria-label="Analyze table"></select></div></div>
+          <div id="profileContainer"><div class="empty-state"><strong data-i18n="analyzeEmpty">テーブルを選択してください</strong></div></div>
+        </section>
+
+        <section class="view" id="view-query">
+          <div class="view-head"><div><h2 data-i18n="queryTitle">SQL Query</h2><p data-i18n="queryBody">SELECT / WITH / EXPLAIN / 読み取り専用PRAGMAだけを実行できます。</p></div></div>
+          <div class="query-layout">
+            <div class="card card-pad">
+              <textarea class="query-editor" id="queryEditor" spellcheck="false">SELECT name, type
+FROM sqlite_master
+WHERE type IN ('table', 'view')
+ORDER BY type, name;</textarea>
+              <div class="query-toolbar">
+                <div class="read-only-badge">● <span data-i18n="readOnly">READ ONLY</span></div>
+                <button class="button primary" id="runQuery" type="button" data-i18n="runQuery">実行 Ctrl+Enter</button>
+              </div>
+              <div class="query-meta" style="margin-top:9px"><span id="queryTime">—</span><span id="queryRows">—</span></div>
+            </div>
+            <div class="card card-pad"><h3 class="section-title" data-i18n="queryPlan">Query plan</h3><div class="plan-list" id="queryPlan"><div class="empty-state"><p data-i18n="planEmpty">SELECTを実行すると EXPLAIN QUERY PLAN を表示します。</p></div></div></div>
+          </div>
+          <div class="card card-pad" style="margin-top:12px">
+            <h3 class="section-title"><span data-i18n="results">Results</span><span><button class="button small" id="exportQueryCsv" type="button" disabled>CSV</button> <button class="button small" id="exportQueryJson" type="button" disabled>JSON</button></span></h3>
+            <div id="queryResults"><div class="empty-state"><strong data-i18n="noResults">まだ結果はありません</strong></div></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mobile-nav" id="mobileNav" hidden>
+    <button class="active" data-view="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg><span data-i18n="navOverview">概要</span></button>
+    <button data-view="tables"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4zM4 10h16M9 6v12"/></svg><span data-i18n="navTables">データ</span></button>
+    <button data-view="schema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="7" height="6" rx="1"/><rect x="14" y="14" width="7" height="6" rx="1"/><path d="M10 7h4a3 3 0 0 1 3 3v4"/></svg><span data-i18n="navSchema">スキーマ</span></button>
+    <button data-view="analyze"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg><span data-i18n="navAnalyze">解析</span></button>
+    <button data-view="query"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 7 4 5-4 5M11 17h8"/></svg><span data-i18n="navQuery">SQL</span></button>
+  </nav>
+
+  <footer><span id="footerName">SQLite Explorer</span> · MIT License · <span data-i18n="footer">完全内包HTMLとして生成</span></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="loading-overlay" id="loadingOverlay" hidden><div class="loading-card"><div class="spinner"></div><strong id="loadingTitle">SQLiteを読み込み中…</strong><span id="loadingText"></span></div></div>
+
+  <dialog id="helpDialog" aria-labelledby="helpTitle">
+    <div class="dialog-header"><h2 id="helpTitle" data-i18n="helpTitle">使い方と注意事項</h2><button class="dialog-close" id="closeHelpButton" type="button" data-i18n-aria-label="close" aria-label="閉じる"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m7 7 10 10M17 7 7 17"/></svg></button></div>
+    <div class="dialog-body">
+      <h3 data-i18n="helpBasicsTitle">基本操作</h3>
+      <ol><li data-i18n="helpStep1">SQLiteファイルを選ぶと、テーブル・ビュー・行数・スキーマを解析します。</li><li data-i18n="helpStep2">Schemaでは定義済みFKと推定関係、Analyzeでは列プロファイルを確認できます。</li><li data-i18n="helpStep3">SQL画面では読み取り専用クエリを実行し、SELECTではクエリプランも表示します。</li></ol>
+      <h3 data-i18n="helpPrivacyTitle">プライバシー</h3><p data-i18n="helpPrivacyBody">データベースはブラウザー内だけで処理されます。アプリは実行時ネットワーク通信を行いません。</p>
+      <h3 data-i18n="helpSafetyTitle">安全性</h3><p data-i18n="helpSafetyBody">v1.0は読み取り専用です。INSERT / UPDATE / DELETE / DDLなど、データベースを変更するSQLはブロックします。</p>
+      <h3 data-i18n="helpLimitsTitle">注意事項</h3><ul><li data-i18n="helpLimit1">sql.jsはSQLiteファイル全体をメモリに読み込むため、大きなDBでは端末性能に左右されます。</li><li data-i18n="helpLimit2">推定リレーションは列名・型・サンプル値から算出した候補です。実際の外部キーとは限りません。</li><li data-i18n="helpLimit3">行数集計や列プロファイルは大きなテーブルでは時間がかかる場合があります。</li></ul>
+      <p class="dialog-note" data-i18n="helpOffline">配布物は dist/index.html ひとつで、ローカルから直接開くことも静的サイトで公開することもできます。</p>
+    </div>
+  </dialog>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const APP_CONFIG = __APP_CONFIG_JSON__;
+    const BUILD_MANIFEST = __BUILD_MANIFEST_JSON__;
+    const EMBEDDED_ASSET_BUNDLE_BASE64 = '__EMBEDDED_ASSET_BUNDLE_BASE64__';
+
+    function decodeBase64Bytes(base64){const binary=atob(base64);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes}
+    function decodeBase64Utf8(base64){return new TextDecoder().decode(decodeBase64Bytes(base64))}
+    const assetBundle=JSON.parse(decodeBase64Utf8(EMBEDDED_ASSET_BUNDLE_BASE64));
+    const blobUrls=new Set();
+    window.StandaloneAssets=Object.freeze({
+      manifest:BUILD_MANIFEST,
+      list(){return Object.entries(assetBundle.dependencies||{}).flatMap(([dependencyId,dependency])=>Object.keys(dependency.assets||{}).map(assetKey=>`${dependencyId}/${assetKey}`))},
+      has(dependencyId,assetKey){return Boolean(assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey])},
+      bytes(dependencyId,assetKey){const asset=assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey];if(!asset)throw new Error(`Embedded asset not found: ${dependencyId}/${assetKey}`);return decodeBase64Bytes(asset.base64)},
+      blobUrl(dependencyId,assetKey){const asset=assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey];if(!asset)throw new Error(`Embedded asset not found: ${dependencyId}/${assetKey}`);const url=URL.createObjectURL(new Blob([this.bytes(dependencyId,assetKey)],{type:asset.mime||'application/octet-stream'}));blobUrls.add(url);return url},
+      async loadClassicScript(dependencyId,assetKey,globalName=''){const sourceUrl=this.blobUrl(dependencyId,assetKey);try{await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=sourceUrl;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load embedded script: ${dependencyId}/${assetKey}`));document.head.append(script)});return globalName?window[globalName]:true}finally{URL.revokeObjectURL(sourceUrl);blobUrls.delete(sourceUrl)}}
+    });
+    window.addEventListener('pagehide',()=>{blobUrls.forEach(url=>URL.revokeObjectURL(url));blobUrls.clear()});
+
+    const T = {
+      ja:{
+        brandMeta:'単一HTML・ローカル処理・読み取り専用',helpTitle:'使い方と注意事項',close:'閉じる',
+        introTitle:'SQLiteファイルを、開くだけで理解する。',introBody:'テーブル、関係、列の傾向、クエリプランまでブラウザー内で解析します。元のデータベースは変更しません。',localBadge:'実行時通信なし',
+        dropTitle:'SQLiteファイルをドロップ',dropBody:'.db / .sqlite / .sqlite3 を選択してください。ファイルは外部へ送信されません。',chooseFile:'ファイルを選択',memoryNote:'sql.js はデータベース全体をメモリへ読み込みます。大きなファイルでは端末性能の影響を受けます。',replace:'変更',
+        navOverview:'概要',navTables:'データ',navSchema:'スキーマ',navAnalyze:'解析',navQuery:'SQL',tablesLabel:'Tables',viewsLabel:'Views',filterTables:'テーブルを絞り込み',
+        overviewTitle:'Database Overview',quickCheck:'Quick check',indexesLabel:'Indexes',rowsLabel:'Rows',relationsLabel:'Relations',largestTables:'大きなテーブル',byRows:'行数順',tableScale:'テーブル規模',tableScaleHint:'行数が多い順',tableNameHeader:'テーブル',tableRowsHeader:'行',tableColumnsHeader:'列',tableIndexesHeader:'Index',tableFkHeader:'FK',noPrimaryKey:'PKなし',viewAllTables:'すべてのテーブルを見る',openTable:'データを開く',databaseInfo:'Database info',relationships:'Relationships',observations:'Observations',
+        selectTableTitle:'テーブルを選択してください',selectTableBody:'左側の一覧からテーブルを選ぶと、データをページ単位で表示します。',previous:'前へ',next:'次へ',
+        schemaTitle:'Schema & Relationships',schemaBody:'定義済みの外部キーと、列名・型・値の重なりから推定した関係を可視化します。',diagram:'ER diagram',relationshipList:'Relationships',definedFk:'Defined FK',inferredFk:'Inferred',
+        analyzeTitle:'Column Profiler',analyzeBody:'列ごとのNULL率、ユニーク数、代表値を確認します。',analyzeEmpty:'テーブルを選択してください',
+        queryTitle:'SQL Query',queryBody:'SELECT / WITH / EXPLAIN / 読み取り専用PRAGMAだけを実行できます。',readOnly:'READ ONLY',runQuery:'実行 Ctrl+Enter',queryPlan:'Query plan',planEmpty:'SELECTを実行すると EXPLAIN QUERY PLAN を表示します。',results:'Results',noResults:'まだ結果はありません',
+        helpBasicsTitle:'基本操作',helpStep1:'SQLiteファイルを選ぶと、テーブル・ビュー・行数・スキーマを解析します。',helpStep2:'Schemaでは定義済みFKと推定関係、Analyzeでは列プロファイルを確認できます。',helpStep3:'SQL画面では読み取り専用クエリを実行し、SELECTではクエリプランも表示します。',
+        helpPrivacyTitle:'プライバシー',helpPrivacyBody:'データベースはブラウザー内だけで処理されます。アプリは実行時ネットワーク通信を行いません。',helpSafetyTitle:'安全性',helpSafetyBody:'v1.0は読み取り専用です。INSERT / UPDATE / DELETE / DDLなど、データベースを変更するSQLはブロックします。',helpLimitsTitle:'注意事項',helpLimit1:'sql.jsはSQLiteファイル全体をメモリに読み込むため、大きなDBでは端末性能に左右されます。',helpLimit2:'推定リレーションは列名・型・サンプル値から算出した候補です。実際の外部キーとは限りません。',helpLimit3:'行数集計や列プロファイルは大きなテーブルでは時間がかかる場合があります。',helpOffline:'配布物は dist/index.html ひとつで、ローカルから直接開くことも静的サイトで公開することもできます。',
+        footer:'完全内包HTMLとして生成',loadingSql:'SQLiteエンジンを準備中…',loadingDb:'データベースを解析中…',loadingRelations:'リレーションを推定中…',
+        invalidSqlite:'SQLiteデータベースとして開けませんでした。ファイル形式を確認してください。',blockedQuery:'読み取り専用モードのため、このSQLは実行できません。',queryDone:'クエリを実行しました',quickCheckOk:'Quick check: OK',quickCheckFail:'Quick checkで問題が見つかりました',
+        noRelations:'関係は見つかりませんでした。',noInsights:'大きな問題候補は見つかりませんでした。',defined:'定義済み',inferred:'推定',rows:'rows',columns:'columns',nulls:'NULL',distinct:'Distinct',topValues:'Top values',totalRows:'Total rows',
+        noPk:'主キーが定義されていないテーブル',fkNoIndex:'外部キー列に一致するインデックスが見つからない候補',inferredCount:'未定義の関係候補',queryError:'SQLエラー',fileLoaded:'データベースを読み込みました',exported:'ファイルを書き出しました'
+      },
+      en:{
+        brandMeta:'Single HTML · Local-first · Read only',helpTitle:'How to use & notes',close:'Close',
+        introTitle:'Understand a SQLite file just by opening it.',introBody:'Inspect tables, relationships, column profiles, and query plans entirely in your browser. The original database is never modified.',localBadge:'No runtime network',
+        dropTitle:'Drop a SQLite file',dropBody:'Choose .db / .sqlite / .sqlite3. The file never leaves your browser.',chooseFile:'Choose file',memoryNote:'sql.js loads the full database into memory. Large files depend on available device memory.',replace:'Replace',
+        navOverview:'Overview',navTables:'Data',navSchema:'Schema',navAnalyze:'Analyze',navQuery:'SQL',tablesLabel:'Tables',viewsLabel:'Views',filterTables:'Filter tables',
+        overviewTitle:'Database Overview',quickCheck:'Quick check',indexesLabel:'Indexes',rowsLabel:'Rows',relationsLabel:'Relations',largestTables:'Largest tables',byRows:'by row count',tableScale:'Table scale',tableScaleHint:'largest first',tableNameHeader:'Table',tableRowsHeader:'Rows',tableColumnsHeader:'Cols',tableIndexesHeader:'Index',tableFkHeader:'FK',noPrimaryKey:'No PK',viewAllTables:'View all tables',openTable:'Open data',databaseInfo:'Database info',relationships:'Relationships',observations:'Observations',
+        selectTableTitle:'Select a table',selectTableBody:'Choose a table from the sidebar to browse its data page by page.',previous:'Previous',next:'Next',
+        schemaTitle:'Schema & Relationships',schemaBody:'Visualize declared foreign keys and inferred relationships based on names, types, and sampled value overlap.',diagram:'ER diagram',relationshipList:'Relationships',definedFk:'Defined FK',inferredFk:'Inferred',
+        analyzeTitle:'Column Profiler',analyzeBody:'Inspect NULL ratio, distinct values, and representative values for each column.',analyzeEmpty:'Select a table',
+        queryTitle:'SQL Query',queryBody:'Only SELECT / WITH / EXPLAIN / read-only PRAGMA statements are allowed.',readOnly:'READ ONLY',runQuery:'Run Ctrl+Enter',queryPlan:'Query plan',planEmpty:'Run a SELECT to display EXPLAIN QUERY PLAN.',results:'Results',noResults:'No results yet',
+        helpBasicsTitle:'Basics',helpStep1:'Choose a SQLite file to inspect tables, views, row counts, and schema.',helpStep2:'Use Schema for declared and inferred relationships, and Analyze for column profiling.',helpStep3:'Use SQL for read-only queries; SELECT statements also show a query plan.',
+        helpPrivacyTitle:'Privacy',helpPrivacyBody:'The database is processed only in your browser. This app makes no runtime network requests.',helpSafetyTitle:'Safety',helpSafetyBody:'v1.0 is read-only. INSERT / UPDATE / DELETE / DDL and other modifying SQL statements are blocked.',helpLimitsTitle:'Notes',helpLimit1:'sql.js loads the whole SQLite file into memory, so large databases depend on device resources.',helpLimit2:'Inferred relationships are candidates computed from column names, types, and sampled values. They are not guaranteed foreign keys.',helpLimit3:'Row counts and profiling can take time on very large tables.',helpOffline:'The deliverable is one dist/index.html that can open locally or be hosted as a static page.',
+        footer:'Generated as one self-contained HTML file',loadingSql:'Preparing SQLite engine…',loadingDb:'Analyzing database…',loadingRelations:'Inferring relationships…',
+        invalidSqlite:'Could not open this as a SQLite database. Check the file format.',blockedQuery:'This SQL is blocked by read-only mode.',queryDone:'Query completed',quickCheckOk:'Quick check: OK',quickCheckFail:'Quick check found an issue',
+        noRelations:'No relationships found.',noInsights:'No major candidates found.',defined:'Defined',inferred:'Inferred',rows:'rows',columns:'columns',nulls:'NULL',distinct:'Distinct',topValues:'Top values',totalRows:'Total rows',
+        noPk:'Tables without a primary key',fkNoIndex:'Foreign-key columns without a matching index candidate',inferredCount:'Undeclared relationship candidates',queryError:'SQL error',fileLoaded:'Database loaded',exported:'File exported'
+      }
+    };
+
+    const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+    const state={lang:'ja',SQL:null,db:null,file:null,tables:[],views:[],indexes:[],triggers:[],tableMeta:new Map(),rowCounts:new Map(),explicitRelations:[],inferredRelations:[],selectedTable:null,page:0,pageSize:100,lastQuery:null,currentView:'overview'};
+    const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const qi=s=>`"${String(s).replace(/"/g,'""')}"`;
+    const fmt=n=>Number.isFinite(Number(n))?new Intl.NumberFormat(state.lang==='ja'?'ja-JP':'en-US',{notation:Number(n)>=100000?'compact':'standard',maximumFractionDigits:1}).format(Number(n)):'—';
+    const bytes=n=>{if(!Number.isFinite(n))return'—';const u=['B','KB','MB','GB'];let i=0,v=n;while(v>=1024&&i<u.length-1){v/=1024;i++}return`${v.toFixed(i?1:0)} ${u[i]}`};
+    const tr=k=>T[state.lang][k]??T.ja[k]??k;
+    function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2400)}
+    function loading(show,title='',text=''){const el=$('#loadingOverlay');el.hidden=!show;if(show){$('#loadingTitle').textContent=title;$('#loadingText').textContent=text}}
+    function nextFrame(){return new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)))}
+    function applyLanguage(lang){state.lang=lang;document.documentElement.lang=lang;localStorage.setItem('sqliteExplorer.lang',lang);$('#languageButton').textContent=lang==='ja'?'EN':'JA';$$('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k]});$$('[data-i18n-title]').forEach(el=>{const v=tr(el.dataset.i18nTitle);el.title=v});$$('[data-i18n-aria-label]').forEach(el=>el.setAttribute('aria-label',tr(el.dataset.i18nAriaLabel)));$$('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));if(state.db){renderOverview();renderRelations();if(state.selectedTable)renderTableData();if(state.currentView==='analyze')profileTable($('#analyzeTableSelect').value)}}
+    function resultRows(result){if(!result?.length)return{columns:[],rows:[]};return{columns:result[0].columns,rows:result[0].values}}
+    function execRows(sql,params=[]){const stmt=state.db.prepare(sql);try{if(params.length)stmt.bind(params);const rows=[];const columns=stmt.getColumnNames();while(stmt.step())rows.push(stmt.get());return{columns,rows}}finally{stmt.free()}}
+    function scalar(sql,params=[]){const r=execRows(sql,params);return r.rows[0]?.[0]??null}
+    function objectRows(sql,params=[]){const r=execRows(sql,params);return r.rows.map(row=>Object.fromEntries(r.columns.map((c,i)=>[c,row[i]])))}
+    function validSqliteHeader(bytesArr){const sig='SQLite format 3\u0000';if(bytesArr.length<16)return false;for(let i=0;i<sig.length;i++)if(bytesArr[i]!==sig.charCodeAt(i))return false;return true}
+    async function ensureSql(){if(state.SQL)return state.SQL;loading(true,tr('loadingSql'));await nextFrame();try{if(!window.initSqlJs){if(!StandaloneAssets.has('sqljs','asm'))throw new Error('Embedded sql.js asset is missing. Rebuild the standalone HTML.');await StandaloneAssets.loadClassicScript('sqljs','asm','initSqlJs')}state.SQL=await window.initSqlJs();return state.SQL}finally{loading(false)}}
+    async function openFile(file){
+      const raw=new Uint8Array(await file.arrayBuffer());if(!validSqliteHeader(raw)){toast(tr('invalidSqlite'));return}
+      loading(true,tr('loadingDb'),file.name);await nextFrame();
+      try{
+        const SQL=await ensureSql();if(state.db){try{state.db.close()}catch{}}
+        state.db=new SQL.Database(raw);state.file=file;state.page=0;state.selectedTable=null;state.tableMeta.clear();state.rowCounts.clear();state.inferredRelations=[];
+        await inspectDatabase();
+        $('#dropzone').hidden=true;$('#workspace').hidden=false;$('#mobileNav').hidden=false;$('#headerFile').hidden=false;$('#mobileFilebar').hidden=false;
+        $('#headerFileName').textContent=$('#mobileFileName').textContent=file.name;$('#headerFileSize').textContent=$('#mobileFileSize').textContent=bytes(file.size);
+        $('#overviewSubtitle').textContent=`${file.name} · ${bytes(file.size)}`;switchView('overview');toast(tr('fileLoaded'));
+      }catch(err){console.error(err);try{state.db?.close()}catch{}state.db=null;toast(`${tr('invalidSqlite')} ${err.message||''}`)}
+      finally{loading(false)}
+    }
+    async function inspectDatabase(){
+      const objects=objectRows("SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name");
+      state.tables=objects.filter(o=>o.type==='table');state.views=objects.filter(o=>o.type==='view');state.indexes=objects.filter(o=>o.type==='index');state.triggers=objects.filter(o=>o.type==='trigger');
+      let done=0;
+      for(const table of state.tables){
+        const name=table.name;let info=[],fks=[],idx=[];
+        try{info=objectRows(`PRAGMA table_info(${qi(name)})`)}catch{}
+        try{fks=objectRows(`PRAGMA foreign_key_list(${qi(name)})`)}catch{}
+        try{idx=objectRows(`PRAGMA index_list(${qi(name)})`)}catch{}
+        state.tableMeta.set(name,{info,fks,idx,sql:table.sql||''});
+        try{state.rowCounts.set(name,Number(scalar(`SELECT COUNT(*) FROM ${qi(name)}`))||0)}catch{state.rowCounts.set(name,0)}
+        done++;if(done%3===0){loading(true,tr('loadingDb'),`${done}/${state.tables.length}`);await nextFrame()}
+      }
+      buildExplicitRelations();renderNavigation();renderOverview();renderDDL();
+      loading(true,tr('loadingRelations'));await nextFrame();await inferRelationships();renderRelations();renderERD();populateAnalyzeSelect();
+    }
+    function buildExplicitRelations(){
+      state.explicitRelations=[];
+      for(const [table,m] of state.tableMeta.entries())for(const fk of m.fks){
+        state.explicitRelations.push({kind:'defined',fromTable:table,fromColumn:fk.from,toTable:fk.table,toColumn:fk.to||'rowid',confidence:1})
+      }
+    }
+    function normalizeType(type=''){const t=String(type).toUpperCase();if(/INT/.test(t))return'int';if(/CHAR|CLOB|TEXT/.test(t))return'text';if(/REAL|FLOA|DOUB/.test(t))return'real';if(/BLOB/.test(t)||!t)return'blob';return'numeric'}
+    function singular(name){let s=String(name).toLowerCase();if(s.endsWith('ies'))return s.slice(0,-3)+'y';if(s.endsWith('ses'))return s.slice(0,-2);if(s.endsWith('s')&&s.length>2)return s.slice(0,-1);return s}
+    async function inferRelationships(){
+      const explicitKey=new Set(state.explicitRelations.map(r=>`${r.fromTable}.${r.fromColumn}->${r.toTable}.${r.toColumn}`));
+      const candidates=[];
+      for(const [fromTable,m] of state.tableMeta.entries()){
+        for(const col of m.info){
+          const cn=String(col.name).toLowerCase();if(!(cn==='id'||cn.endsWith('_id')||cn.endsWith('id')))continue;
+          for(const [toTable,tm] of state.tableMeta.entries()){
+            if(fromTable===toTable)continue;
+            const pkCols=tm.info.filter(c=>Number(c.pk)>0);
+            const targets=pkCols.length?pkCols:tm.info.filter(c=>String(c.name).toLowerCase()==='id');
+            for(const target of targets){
+              const key=`${fromTable}.${col.name}->${toTable}.${target.name}`;if(explicitKey.has(key))continue;
+              const sourceStem=cn.replace(/_?id$/,'');const targetStem=singular(toTable);
+              const nameScore=(sourceStem===targetStem||sourceStem===String(toTable).toLowerCase()) ? .46 : (cn===`${targetStem}_id` ? .46 : 0);
+              if(nameScore===0)continue;
+              const typeScore=normalizeType(col.type)===normalizeType(target.type)?.16:0;
+              candidates.push({fromTable,fromColumn:col.name,toTable,toColumn:target.name,base:nameScore+typeScore});
+            }
+          }
+        }
+      }
+      candidates.sort((a,b)=>b.base-a.base);const limited=candidates.slice(0,36);const inferred=[];
+      for(let i=0;i<limited.length;i++){
+        const c=limited[i];let overlap=0;
+        try{
+          const a=execRows(`SELECT DISTINCT ${qi(c.fromColumn)} FROM ${qi(c.fromTable)} WHERE ${qi(c.fromColumn)} IS NOT NULL LIMIT 250`).rows.flat();
+          const b=new Set(execRows(`SELECT DISTINCT ${qi(c.toColumn)} FROM ${qi(c.toTable)} WHERE ${qi(c.toColumn)} IS NOT NULL LIMIT 1200`).rows.flat().map(v=>String(v)));
+          if(a.length)overlap=a.reduce((n,v)=>n+(b.has(String(v))?1:0),0)/a.length;
+        }catch{}
+        const confidence=Math.min(.99,c.base+overlap*.38);
+        if(confidence>=.72)inferred.push({...c,kind:'inferred',confidence,overlap});
+        if(i%5===0)await nextFrame();
+      }
+      const best=new Map();for(const r of inferred){const k=`${r.fromTable}.${r.fromColumn}`;if(!best.has(k)||best.get(k).confidence<r.confidence)best.set(k,r)}
+      state.inferredRelations=Array.from(best.values()).sort((a,b)=>b.confidence-a.confidence);
+    }
+    function renderNavigation(){
+      const q=$('#tableSearch').value.trim().toLowerCase();const list=$('#tableList');list.innerHTML='';
+      state.tables.filter(t=>!q||t.name.toLowerCase().includes(q)).forEach(t=>{const b=document.createElement('button');b.className='table-button'+(state.selectedTable===t.name?' active':'');b.type='button';b.innerHTML=`<span class="table-name">${esc(t.name)}</span><span class="table-count">${fmt(state.rowCounts.get(t.name)||0)}</span>`;b.onclick=()=>selectTable(t.name);list.append(b)});
+      const viewList=$('#viewList');viewList.innerHTML='';state.views.forEach(v=>{const b=document.createElement('button');b.className='table-button';b.type='button';b.innerHTML=`<span class="table-name">${esc(v.name)}</span>`;b.onclick=()=>selectTable(v.name,true);viewList.append(b)});$('#viewListSection').hidden=!state.views.length;
+      const selector=$('#dataTableSelect');if(selector){const current=selector.value;selector.innerHTML=[...state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`),...state.views.map(v=>`<option value="${esc(v.name)}" data-view-object="1">${esc(v.name)} · view</option>`)].join('');if(state.selectedTable)selector.value=state.selectedTable;else if(current)selector.value=current}
+    }
+    function switchView(view){state.currentView=view;$$('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='schema')setTimeout(renderERD,0);if(view==='analyze'&&state.selectedTable){$('#analyzeTableSelect').value=state.selectedTable;profileTable(state.selectedTable)}}
+    function renderOverview(){
+      if(!state.db)return;
+      const total=Array.from(state.rowCounts.values()).reduce((a,b)=>a+b,0),relations=state.explicitRelations.length+state.inferredRelations.length;
+      $('#metricTables').textContent=fmt(state.tables.length);$('#metricViews').textContent=fmt(state.views.length);$('#metricIndexes').textContent=fmt(state.indexes.length);$('#metricRows').textContent=fmt(total);$('#metricRelations').textContent=fmt(relations);
+      const sorted=[...state.tables].sort((a,b)=>(state.rowCounts.get(b.name)||0)-(state.rowCounts.get(a.name)||0)).slice(0,8);const max=Math.max(1,...sorted.map(t=>state.rowCounts.get(t.name)||0));
+      if(sorted.length){
+        const head=`<div class="scale-head" aria-hidden="true"><span>${esc(tr('tableNameHeader'))}</span><span>${esc(tr('tableRowsHeader'))}</span><span>${esc(tr('tableColumnsHeader'))}</span><span>${esc(tr('tableIndexesHeader'))}</span><span>${esc(tr('tableFkHeader'))}</span></div>`;
+        const rows=sorted.map(t=>{const n=state.rowCounts.get(t.name)||0,meta=state.tableMeta.get(t.name)||{info:[],idx:[],fks:[]},cols=meta.info?.length||0,indexes=meta.idx?.length||0,fks=meta.fks?.length||0,hasPk=(meta.info||[]).some(c=>Number(c.pk)>0),pct=Math.max(2,n/max*100);return`<button class="scale-row" type="button" data-overview-table="${esc(t.name)}" aria-label="${esc(t.name)} · ${fmt(n)} ${esc(tr('rows'))} · ${esc(tr('openTable'))}"><span class="scale-name"><span class="scale-name-line"><span class="scale-table-name" title="${esc(t.name)}">${esc(t.name)}</span>${hasPk?'':`<span class="scale-warning">${esc(tr('noPrimaryKey'))}</span>`}</span><span class="scale-mini-track" aria-hidden="true"><span class="scale-mini-fill" style="width:${pct}%"></span></span></span><span class="scale-number primary">${fmt(n)}</span><span class="scale-number">${fmt(cols)}</span><span class="scale-number">${fmt(indexes)}</span><span class="scale-number">${fmt(fks)}</span></button>`}).join('');
+        $('#largestTables').innerHTML=`<div class="scale-table">${head}${rows}</div><div class="scale-footer"><button class="scale-all" id="viewAllTables" type="button">${esc(tr('viewAllTables'))} →</button></div>`;
+        $$('[data-overview-table]').forEach(b=>b.onclick=()=>selectTable(b.dataset.overviewTable));$('#viewAllTables').onclick=()=>switchView('tables');
+      }else $('#largestTables').innerHTML=`<div class="empty-state"><p>—</p></div>`;
+      const info=[
+        ['Size',bytes(state.file?.size||0)],['Encoding',safeScalar('PRAGMA encoding')],['Page size',`${safeScalar('PRAGMA page_size')||'—'} B`],['Pages',fmt(Number(safeScalar('PRAGMA page_count'))||0)],['User version',String(safeScalar('PRAGMA user_version')??'—')],['Schema version',String(safeScalar('PRAGMA schema_version')??'—')]
+      ];$('#databaseInfo').innerHTML=info.map(([k,v])=>`<div class="summary-item"><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join('');
+      const rels=[...state.explicitRelations,...state.inferredRelations].slice(0,6);$('#overviewRelations').innerHTML=rels.length?`<div class="relation-list">${rels.map(relationHtml).join('')}</div>`:`<div class="empty-state"><p>${esc(tr('noRelations'))}</p></div>`;
+      renderInsights()
+    }
+    function safeScalar(sql){try{return scalar(sql)}catch{return null}}
+    function renderInsights(){
+      const noPk=state.tables.filter(t=>!(state.tableMeta.get(t.name)?.info||[]).some(c=>Number(c.pk)>0));
+      const missingIndex=[];
+      for(const r of state.explicitRelations){const meta=state.tableMeta.get(r.fromTable);const indexes=meta?.idx||[];let found=false;for(const idx of indexes){try{const cols=objectRows(`PRAGMA index_info(${qi(idx.name)})`).map(x=>x.name);if(cols[0]===r.fromColumn){found=true;break}}catch{}}if(!found)missingIndex.push(r)}
+      const insights=[];if(noPk.length)insights.push({kind:'warning',title:`${tr('noPk')}: ${noPk.length}`,body:noPk.slice(0,5).map(x=>x.name).join(', ')});if(missingIndex.length)insights.push({kind:'warning',title:`${tr('fkNoIndex')}: ${missingIndex.length}`,body:missingIndex.slice(0,4).map(r=>`${r.fromTable}.${r.fromColumn}`).join(', ')});if(state.inferredRelations.length)insights.push({kind:'normal',title:`${tr('inferredCount')}: ${state.inferredRelations.length}`,body:state.inferredRelations.slice(0,3).map(r=>`${r.fromTable}.${r.fromColumn} → ${r.toTable}.${r.toColumn}`).join(', ')});
+      $('#insights').innerHTML=insights.length?insights.map(x=>`<div class="insight ${x.kind==='warning'?'warning':''}"><span class="insight-icon">${x.kind==='warning'?'⚠':'◎'}</span><div><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></div></div>`).join(''):`<div class="empty-state"><p>${esc(tr('noInsights'))}</p></div>`
+    }
+    function relationHtml(r){return`<div class="relation-row"><span class="relation-col" title="${esc(r.fromTable+'.'+r.fromColumn)}">${esc(r.fromTable)}.<b>${esc(r.fromColumn)}</b></span><span class="relation-arrow">→</span><span class="relation-col" title="${esc(r.toTable+'.'+r.toColumn)}">${esc(r.toTable)}.<b>${esc(r.toColumn)}</b></span><span class="confidence ${r.kind==='inferred'?'inferred':''}">${r.kind==='inferred'?`${tr('inferred')} ${Math.round(r.confidence*100)}%`:tr('defined')}</span></div>`}
+    function renderRelations(){const all=[...state.explicitRelations,...state.inferredRelations];$('#relationList').innerHTML=all.length?all.map(relationHtml).join(''):`<div class="empty-state"><p>${esc(tr('noRelations'))}</p></div>`;if(state.db)renderOverview()}
+    function renderDDL(){const parts=[];for(const o of [...state.tables,...state.views,...state.indexes,...state.triggers])if(o.sql)parts.push(`-- ${o.type}: ${o.name}\n${o.sql};`);$('#ddlText').textContent=parts.join('\n\n')}
+    async function selectTable(name,isView=false){state.selectedTable=name;state.page=0;renderNavigation();switchView('tables');await renderTableData(isView);if(!isView&&$('#analyzeTableSelect option[value="'+CSS.escape(name)+'"]'))$('#analyzeTableSelect').value=name}
+    async function renderTableData(isView=false){
+      if(!state.selectedTable)return;const name=state.selectedTable,total=isView?null:(state.rowCounts.get(name)||0),offset=state.page*state.pageSize;$('#dataTitle').textContent=name;$('#dataSubtitle').textContent=isView?'View':`${fmt(total)} ${tr('rows')}`;
+      let r;try{r=execRows(`SELECT * FROM ${qi(name)} LIMIT ${state.pageSize} OFFSET ${offset}`)}catch(err){$('#dataContainer').innerHTML=`<div class="error-box">${esc(err.message)}</div>`;return}
+      $('#dataContainer').innerHTML=tableHtml(r.columns,r.rows);$('#pagination').hidden=isView||!total;$('#pageInfo').textContent=total?`${offset+1}–${Math.min(offset+r.rows.length,total)} / ${fmt(total)}`:'';$('#prevPage').disabled=state.page<=0;$('#nextPage').disabled=!total||offset+state.pageSize>=total
+    }
+    function valueHtml(v){if(v===null)return'<span class="null">NULL</span>';if(v instanceof Uint8Array)return`<span class="blob">&lt;BLOB ${bytes(v.length)}&gt;</span>`;const s=String(v);return`<span title="${esc(s)}">${esc(s)}</span>`}
+    function tableHtml(columns,rows){if(!columns.length)return`<div class="empty-state"><p>0 ${esc(tr('rows'))}</p></div>`;return`<div class="table-wrap"><table><thead><tr>${columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${valueHtml(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
+    function populateAnalyzeSelect(){const s=$('#analyzeTableSelect');s.innerHTML=state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');if(state.tables.length){state.selectedTable=state.selectedTable||state.tables[0].name;s.value=state.selectedTable}}
+    async function profileTable(name){
+      if(!name||!state.db)return;const meta=state.tableMeta.get(name);if(!meta)return;$('#profileContainer').innerHTML=`<div class="empty-state"><p>${esc(tr('loadingDb'))}</p></div>`;await nextFrame();const total=state.rowCounts.get(name)||0;const cards=[];
+      for(let i=0;i<meta.info.length;i++){const c=meta.info[i],col=qi(c.name);let nulls=0,distinct=0,top=[];
+        try{nulls=Number(scalar(`SELECT COUNT(*) FROM ${qi(name)} WHERE ${col} IS NULL`))||0}catch{}try{distinct=Number(scalar(`SELECT COUNT(DISTINCT ${col}) FROM ${qi(name)}`))||0}catch{}try{top=execRows(`SELECT ${col}, COUNT(*) c FROM ${qi(name)} WHERE ${col} IS NOT NULL GROUP BY ${col} ORDER BY c DESC LIMIT 5`).rows}catch{}
+        const ratio=total?Math.round(nulls/total*1000)/10:0;cards.push(`<article class="profile-card"><div class="profile-head"><span class="profile-name">${esc(c.name)}${Number(c.pk)>0?' 🔑':''}</span><span class="type-pill">${esc(c.type||'ANY')}</span></div><div class="profile-stats"><div class="mini-stat"><strong>${fmt(nulls)}</strong><span>${esc(tr('nulls'))} · ${ratio}%</span></div><div class="mini-stat"><strong>${fmt(distinct)}</strong><span>${esc(tr('distinct'))}</span></div><div class="mini-stat"><strong>${fmt(total)}</strong><span>${esc(tr('totalRows'))}</span></div></div><div class="top-values">${top.map(([v,n])=>`<span class="value-pill" title="${esc(String(v))}">${esc(String(v))} · ${fmt(n)}</span>`).join('')||'<span class="value-pill">—</span>'}</div></article>`);
+        if(i%2===1)await nextFrame()
+      }$('#profileContainer').innerHTML=`<div class="profile-grid">${cards.join('')}</div>`
+    }
+    function renderERD(){
+      const svg=$('#erdSvg');if(!svg||!state.tables.length)return;const tables=state.tables.slice(0,40),cols=3,nodeW=220,rowH=26,headH=34,gapX=70,gapY=70;const positions=new Map();let maxY=0;
+      tables.forEach((t,i)=>{const meta=state.tableMeta.get(t.name),visible=(meta?.info||[]).slice(0,7),h=headH+Math.max(1,visible.length)*rowH+8,x=30+(i%cols)*(nodeW+gapX),y=30+Math.floor(i/cols)*(250+gapY);positions.set(t.name,{x,y,w:nodeW,h});maxY=Math.max(maxY,y+h)});
+      const width=30+Math.min(cols,tables.length)*(nodeW+gapX),height=maxY+40;svg.setAttribute('viewBox',`0 0 ${Math.max(760,width)} ${Math.max(560,height)}`);svg.setAttribute('width',Math.max(760,width));svg.setAttribute('height',Math.max(560,height));
+      const rels=[...state.explicitRelations,...state.inferredRelations].filter(r=>positions.has(r.fromTable)&&positions.has(r.toTable));let edges='';
+      rels.forEach(r=>{const a=positions.get(r.fromTable),b=positions.get(r.toTable),x1=a.x+a.w,y1=a.y+a.h/2,x2=b.x,y2=b.y+b.h/2;const mid=(x1+x2)/2;edges+=`<path class="erd-edge ${r.kind==='inferred'?'inferred':''}" d="M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}"><title>${esc(r.fromTable+'.'+r.fromColumn+' → '+r.toTable+'.'+r.toColumn)}</title></path>`});
+      let nodes='';tables.forEach(t=>{const p=positions.get(t.name),meta=state.tableMeta.get(t.name),visible=(meta?.info||[]).slice(0,7);nodes+=`<g class="erd-node" transform="translate(${p.x} ${p.y})"><rect width="${p.w}" height="${p.h}" rx="10"/><path class="head" d="M10 0h${p.w-20}a10 10 0 0 1 10 10v24H0V10A10 10 0 0 1 10 0z"/><text class="name" x="12" y="22">${esc(t.name)}</text>${visible.map((c,i)=>`<text x="12" y="${headH+18+i*rowH}">${Number(c.pk)>0?'PK ':''}${esc(c.name)} <tspan fill="#73766f">${esc(c.type||'')}</tspan></text>`).join('')}${(meta?.info.length||0)>7?`<text x="12" y="${headH+18+7*rowH}" fill="#777">… +${meta.info.length-7}</text>`:''}</g>`});svg.innerHTML=edges+nodes
+    }
+    function stripLeadingComments(sql){return sql.replace(/^\s*(?:--[^\n]*\n|\/\*[\s\S]*?\*\/\s*)*/,'').trim()}
+    function isReadOnly(sql){
+      const s=stripLeadingComments(sql);
+      const scrubbed=s
+        .replace(/--[^\n]*(?:\n|$)/g,' ')
+        .replace(/\/\*[\s\S]*?\*\//g,' ')
+        .replace(/'(?:''|[^'])*'/g,"''")
+        .replace(/\"(?:\"\"|[^\"])*\"/g,'""');
+      const body=scrubbed.replace(/;\s*$/,'');
+      if(body.includes(';'))return false;
+      if(/\b(insert|update|delete|replace|create|drop|alter|vacuum|attach|detach|reindex|analyze)\b/i.test(body))return false;
+      if(/^(select|with|explain)\b/i.test(body))return true;
+      const m=body.match(/^pragma\s+([a-z_]+)/i);
+      if(!m||body.includes('='))return false;
+      return new Set(['table_info','table_xinfo','foreign_key_list','index_list','index_info','integrity_check','quick_check','compile_options','database_list','page_count','page_size','encoding','user_version','schema_version']).has(m[1].toLowerCase())
+    }
+    function isPlannable(sql){const s=stripLeadingComments(sql);return /^(select|with)\b/i.test(s)}
+    function runSql(){
+      if(!state.db)return;const sql=$('#queryEditor').value.trim();if(!sql)return;if(!isReadOnly(sql)){showQueryError(tr('blockedQuery'));return}const started=performance.now();
+      try{const result=resultRows(state.db.exec(sql));state.lastQuery=result;const elapsed=performance.now()-started;$('#queryTime').textContent=`${elapsed.toFixed(1)} ms`;$('#queryRows').textContent=`${fmt(result.rows.length)} ${tr('rows')}`;$('#queryResults').innerHTML=tableHtml(result.columns,result.rows);$('#exportQueryCsv').disabled=!result.columns.length;$('#exportQueryJson').disabled=!result.columns.length;renderQueryPlan(sql);toast(tr('queryDone'))}catch(err){showQueryError(err.message)}
+    }
+    function showQueryError(msg){$('#queryResults').innerHTML=`<div class="error-box">${esc(tr('queryError'))}: ${esc(msg)}</div>`;$('#queryPlan').innerHTML='';state.lastQuery=null;$('#exportQueryCsv').disabled=true;$('#exportQueryJson').disabled=true}
+    function renderQueryPlan(sql){const box=$('#queryPlan');if(!isPlannable(sql)){box.innerHTML=`<div class="empty-state"><p>${esc(tr('planEmpty'))}</p></div>`;return}try{const plan=objectRows(`EXPLAIN QUERY PLAN ${sql}`);box.innerHTML=plan.length?plan.map(p=>`<div class="plan-item">${esc(p.detail??Object.values(p).join(' · '))}</div>`).join(''):`<div class="empty-state"><p>—</p></div>`}catch(err){box.innerHTML=`<div class="error-box">${esc(err.message)}</div>`}}
+    function csvValue(v){if(v===null)return'';if(v instanceof Uint8Array)return`<BLOB ${v.length} bytes>`;const s=String(v);return/[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s}
+    function download(name,mime,text){const url=URL.createObjectURL(new Blob([text],{type:mime}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast(tr('exported'))}
+    function exportRows(name,format,data){if(!data?.columns.length)return;if(format==='csv'){const txt='\uFEFF'+[data.columns.map(csvValue).join(','),...data.rows.map(r=>r.map(csvValue).join(','))].join('\r\n');download(`${name}.csv`,'text/csv;charset=utf-8',txt)}else{const arr=data.rows.map(r=>Object.fromEntries(data.columns.map((c,i)=>[c,r[i] instanceof Uint8Array?`<BLOB ${r[i].length} bytes>`:r[i]])));download(`${name}.json`,'application/json;charset=utf-8',JSON.stringify(arr,null,2))}}
+    function exportCurrentTable(format){if(!state.selectedTable)return;try{const r=execRows(`SELECT * FROM ${qi(state.selectedTable)}`);exportRows(state.selectedTable,format,r)}catch(err){toast(err.message)}}
+    function runQuickCheck(){if(!state.db)return;loading(true,'PRAGMA quick_check');setTimeout(()=>{try{const rows=execRows('PRAGMA quick_check').rows.flat().map(String);const ok=rows.length===1&&rows[0].toLowerCase()==='ok';toast(ok?tr('quickCheckOk'):`${tr('quickCheckFail')}: ${rows.slice(0,3).join('; ')}`)}catch(err){toast(err.message)}finally{loading(false)}},20)}
+    function resetFile(){try{state.db?.close()}catch{}state.db=null;state.file=null;state.tables=[];state.views=[];state.indexes=[];state.tableMeta.clear();state.rowCounts.clear();state.explicitRelations=[];state.inferredRelations=[];state.selectedTable=null;$('#workspace').hidden=true;$('#dropzone').hidden=false;$('#mobileNav').hidden=true;$('#headerFile').hidden=true;$('#mobileFilebar').hidden=true;$('#fileInput').value=''}
+    function detectLang(){const stored=localStorage.getItem('sqliteExplorer.lang');if(stored==='ja'||stored==='en')return stored;return (navigator.language||'ja').toLowerCase().startsWith('ja')?'ja':'en'}
+
+    $('#dataTableSelect').onchange=e=>{const opt=e.target.selectedOptions[0];selectTable(e.target.value,Boolean(opt?.dataset.viewObject))};
+    $('#chooseFile').onclick=()=>$('#fileInput').click();$('#fileInput').onchange=e=>e.target.files[0]&&openFile(e.target.files[0]);['dragenter','dragover'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.add('dragover')}));['dragleave','drop'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.remove('dragover')}));$('#dropzone').addEventListener('drop',e=>e.dataTransfer.files[0]&&openFile(e.dataTransfer.files[0]));
+    $$('.nav-button,.mobile-nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));$('#tableSearch').addEventListener('input',renderNavigation);$('#prevPage').onclick=()=>{state.page=Math.max(0,state.page-1);renderTableData()};$('#nextPage').onclick=()=>{state.page++;renderTableData()};
+    $$('.schema-tab').forEach(b=>b.onclick=()=>{$$('.schema-tab').forEach(x=>x.classList.toggle('active',x===b));$$('.schema-panel').forEach(p=>p.classList.toggle('active',p.id===`schema-${b.dataset.schemaPanel}`));if(b.dataset.schemaPanel==='diagram')renderERD()});
+    $('#analyzeTableSelect').onchange=e=>{state.selectedTable=e.target.value;profileTable(e.target.value);renderNavigation()};$('#runQuery').onclick=runSql;$('#queryEditor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runSql()}if(e.key==='Tab'){e.preventDefault();const t=e.target,s=t.selectionStart;t.value=t.value.slice(0,s)+'  '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+2}});
+    $('#exportQueryCsv').onclick=()=>exportRows('query-result','csv',state.lastQuery);$('#exportQueryJson').onclick=()=>exportRows('query-result','json',state.lastQuery);$('#exportTableCsv').onclick=()=>exportCurrentTable('csv');$('#exportTableJson').onclick=()=>exportCurrentTable('json');$('#runQuickCheck').onclick=runQuickCheck;
+    $('#replaceFileHeader').onclick=resetFile;$('#replaceFileMobile').onclick=resetFile;$('#languageButton').onclick=()=>applyLanguage(state.lang==='ja'?'en':'ja');$('#helpButton').onclick=()=>$('#helpDialog').showModal();$('#closeHelpButton').onclick=()=>$('#helpDialog').close();$('#helpDialog').addEventListener('click',e=>{if(e.target===$('#helpDialog'))$('#helpDialog').close()});
+    $('#brandName').textContent=APP_CONFIG.name||'SQLite Explorer';$('#footerName').textContent=APP_CONFIG.name||'SQLite Explorer';$('#versionBadge').textContent=`v${APP_CONFIG.version||'1.0'}`;applyLanguage(detectLang());
+  })();
+  </script>
+</body>
+</html>

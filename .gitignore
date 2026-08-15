@@ -1,0 +1,5 @@
+.cache/
+dist/*
+!dist/.gitkeep
+*.tmp
+.DS_Store

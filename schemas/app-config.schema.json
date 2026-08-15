@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "name",
+    "slug",
+    "version",
+    "build"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "nameJa": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "descriptionJa": {
+      "type": "string"
+    },
+    "defaultLanguage": {
+      "enum": [
+        "auto",
+        "ja",
+        "en"
+      ]
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "required": [
+        "output",
+        "blockRuntimeNetwork"
+      ],
+      "properties": {
+        "output": {
+          "type": "string"
+        },
+        "blockRuntimeNetwork": {
+          "type": "boolean"
+        },
+        "selfExtract": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "output": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
