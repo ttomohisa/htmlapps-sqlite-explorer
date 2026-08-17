@@ -29,6 +29,18 @@ function Write-Step([string]$Message) {
   Write-Host "[SQLite Explorer] $Message" -ForegroundColor Cyan
 }
 
+function Get-FileSha256Hex([string]$Path) {
+  if (-not (Test-Path $Path)) { throw "File not found for SHA-256: $Path" }
+  $stream = [System.IO.File]::OpenRead($Path)
+  $algorithm = [System.Security.Cryptography.SHA256]::Create()
+  try {
+    return (($algorithm.ComputeHash($stream) | ForEach-Object { $_.ToString("x2") }) -join "")
+  } finally {
+    $algorithm.Dispose()
+    $stream.Dispose()
+  }
+}
+
 function Get-Json([string]$Path) {
   if (-not (Test-Path $Path)) { throw "Required file not found: $Path" }
   return Get-Content -Raw -Encoding UTF8 $Path | ConvertFrom-Json
@@ -88,7 +100,7 @@ function Get-NpmPackage([string]$PackageName, [string]$Version) {
 
   return [ordered]@{
     Root = $packageDir
-    ArchiveSha256 = (Get-FileHash -Algorithm SHA256 -Path $archivePath).Hash.ToLowerInvariant()
+    ArchiveSha256 = Get-FileSha256Hex $archivePath
   }
 }
 
@@ -248,7 +260,7 @@ if (-not $SkipSelfExtract -and $appConfig.build.selfExtract -and $appConfig.buil
   & (Join-Path $Root "scripts\verify-self-extract.ps1") -Path $selfExtractOutput
 }
 
-$outputHash = (Get-FileHash -Algorithm SHA256 -Path $OutputPath).Hash.ToLowerInvariant()
+$outputHash = Get-FileSha256Hex $OutputPath
 $outputSizeMb = [Math]::Round((Get-Item $OutputPath).Length / 1MB, 2)
 Write-Host ""
 Write-Host "[OK] Standalone HTML: $OutputPath" -ForegroundColor Green

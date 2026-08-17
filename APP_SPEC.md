@@ -15,6 +15,7 @@ A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite da
 - No dark mode.
 - v1.0 is read-only and never writes back to the source database.
 - Third-party dependencies are pinned and embedded by the build.
+- The self-extract loader is ASCII-only, inherits the embedded favicon from `dist/index.html`, and restores the standalone HTML byte-for-byte.
 
 ## v1.0 scope
 1. Database Overview
@@ -64,3 +65,4 @@ Below 820px:
 - Relationship inference does not replace declared FK data.
 - Write SQL is rejected before execution.
 - Language switch updates visible navigation/help text.
+- `dist/index.self-extract.html` has readable loader text, the same embedded favicon as `dist/index.html`, and restores `dist/index.html` byte-for-byte.

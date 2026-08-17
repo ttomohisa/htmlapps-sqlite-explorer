@@ -14,6 +14,7 @@ Edit `src/index.template.html`. Never hand-edit generated `dist/index.html`.
 ## Build
 Use `build-standalone.bat` or `build-standalone.ps1`.
 The build downloads only pinned dependencies, embeds them into the HTML, writes a dependency manifest, verifies the standalone contract, and optionally creates the self-extracting HTML.
+The self-extract builder and generated loader must remain ASCII-only so Windows PowerShell 5.1 cannot corrupt loader text. The loader must inherit the embedded favicon from `dist/index.html` rather than maintaining a second favicon.
 
 ## Runtime privacy
 Do not add runtime `fetch`, XHR, WebSocket, EventSource, remote fonts, analytics, trackers, CDN scripts, remote images, or telemetry.

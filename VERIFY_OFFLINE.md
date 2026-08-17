@@ -13,3 +13,14 @@ The generated CSP must include:
 ```text
 connect-src 'none'
 ```
+
+## Self-extracting variant
+
+Open `dist/index.self-extract.html` directly and confirm that:
+
+- the Japanese loader text is readable rather than mojibake;
+- the favicon matches `dist/index.html`;
+- the loader disappears and the SQLite Explorer opens normally;
+- the browser console contains no decompression or CSP errors.
+
+`scripts/verify-self-extract.ps1` also enforces an ASCII-only loader, embedded favicon inheritance, and byte-for-byte restoration of `dist/index.html`.
