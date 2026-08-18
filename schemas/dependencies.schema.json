@@ -51,6 +51,13 @@
                 },
                 "stripSourceMapComment": {
                   "type": "boolean"
+                },
+                "compression": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "gzip"
+                  ]
                 }
               }
             }

@@ -6,7 +6,8 @@
 4. Open a SQLite database.
 5. Verify Overview, Data, Schema, Analyze and SQL.
 6. Confirm the Network panel has no outgoing requests.
-7. Confirm write SQL such as `DELETE FROM ...` is blocked before execution.
+7. Confirm the browser console contains no gzip decompression errors when the first database is opened.
+8. Confirm write SQL such as `DELETE FROM ...` is blocked before execution.
 
 The generated CSP must include:
 

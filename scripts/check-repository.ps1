@@ -37,7 +37,7 @@ if ([string]::IsNullOrWhiteSpace([string]$app.slug)) { throw "app.config.json: s
 if ([string]::IsNullOrWhiteSpace([string]$app.version)) { throw "app.config.json: version is required" }
 
 $template = [IO.File]::ReadAllText((Join-Path $Root "src\index.template.html"), [Text.Encoding]::UTF8)
-foreach ($token in @("__APP_CONFIG_JSON__","__BUILD_MANIFEST_JSON__","__EMBEDDED_ASSET_BUNDLE_BASE64__")) {
+foreach ($token in @("__APP_CONFIG_JSON__","__BUILD_MANIFEST_JSON__","__EMBEDDED_ASSET_BUNDLE_JSON__")) {
   $count = ([regex]::Matches($template, [regex]::Escape($token))).Count
   if ($count -ne 1) { throw "$token must occur exactly once; found $count." }
 }

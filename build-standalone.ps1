@@ -130,6 +130,25 @@ function Get-AssetBytes([string]$Path, [bool]$StripSourceMapComment) {
   return [System.IO.File]::ReadAllBytes($Path)
 }
 
+function Compress-GzipBytes([byte[]]$Bytes) {
+  $output = New-Object System.IO.MemoryStream
+  $gzip = New-Object System.IO.Compression.GZipStream -ArgumentList @(
+    $output,
+    [System.IO.Compression.CompressionMode]::Compress,
+    $true
+  )
+  try {
+    $gzip.Write($Bytes, 0, $Bytes.Length)
+  } finally {
+    $gzip.Dispose()
+  }
+  try {
+    return $output.ToArray()
+  } finally {
+    $output.Dispose()
+  }
+}
+
 function ConvertTo-SafeJson([object]$Value, [int]$Depth = 30) {
   return ($Value | ConvertTo-Json -Compress -Depth $Depth).Replace("<", "\u003c").Replace(">", "\u003e").Replace("&", "\u0026")
 }
@@ -160,7 +179,7 @@ if (-not $OutputPathWasSpecified) {
 }
 
 $ids = @{}
-$assetBundle = [ordered]@{ schemaVersion = 1; dependencies = [ordered]@{} }
+$assetBundle = [ordered]@{ schemaVersion = 2; dependencies = [ordered]@{} }
 $manifestDependencies = @()
 
 foreach ($dependency in $dependencies) {
@@ -186,16 +205,33 @@ foreach ($dependency in $dependencies) {
     if ($asset.PSObject.Properties.Name -contains "mime") { $configuredMime = [string]$asset.mime }
     $mime = if ([string]::IsNullOrWhiteSpace($configuredMime)) { Get-MimeType $assetPath } else { $configuredMime }
 
+    $compression = "none"
+    if ($asset.PSObject.Properties.Name -contains "compression") { $compression = [string]$asset.compression }
+    [byte[]]$embeddedBytes = $assetBytes
+    if ($compression -eq "gzip") {
+      $embeddedBytes = Compress-GzipBytes $assetBytes
+    } elseif ($compression -ne "none") {
+      throw "Unsupported compression '$compression' for asset '$id/$key'."
+    }
+    $encoding = if ($compression -eq "gzip") { "gzip" } else { "identity" }
+
     $shaAlgorithm = [Security.Cryptography.SHA256]::Create()
     try { $hashBytes = $shaAlgorithm.ComputeHash($assetBytes) } finally { $shaAlgorithm.Dispose() }
     $sha = ($hashBytes | ForEach-Object { $_.ToString("x2") }) -join ""
 
-    $dependencyAssets[$key] = [ordered]@{ mime = $mime; base64 = [Convert]::ToBase64String($assetBytes) }
+    $dependencyAssets[$key] = [ordered]@{
+      mime = $mime
+      encoding = $encoding
+      originalBytes = $assetBytes.Length
+      base64 = [Convert]::ToBase64String($embeddedBytes)
+    }
     $manifestAssets += [ordered]@{
       key = $key
       path = [string]$asset.path
       mime = $mime
       bytes = $assetBytes.Length
+      embeddedBytes = $embeddedBytes.Length
+      compression = $compression
       sha256 = $sha
     }
   }
@@ -231,7 +267,7 @@ $assetBundleJson = ConvertTo-SafeJson $assetBundle 50
 $replacements = [ordered]@{
   "__APP_CONFIG_JSON__" = ConvertTo-SafeJson $appConfig 20
   "__BUILD_MANIFEST_JSON__" = ConvertTo-SafeJson $manifest 40
-  "__EMBEDDED_ASSET_BUNDLE_BASE64__" = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($assetBundleJson))
+  "__EMBEDDED_ASSET_BUNDLE_JSON__" = $assetBundleJson
 }
 
 foreach ($entry in $replacements.GetEnumerator()) {

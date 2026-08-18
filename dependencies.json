@@ -12,7 +12,8 @@
           "key": "asm",
           "path": "dist/sql-asm.js",
           "mime": "text/javascript",
-          "stripSourceMapComment": true
+          "stripSourceMapComment": true,
+          "compression": "gzip"
         }
       ]
     }

@@ -221,19 +221,18 @@ ORDER BY type, name;</textarea>
 
     const APP_CONFIG = __APP_CONFIG_JSON__;
     const BUILD_MANIFEST = __BUILD_MANIFEST_JSON__;
-    const EMBEDDED_ASSET_BUNDLE_BASE64 = '__EMBEDDED_ASSET_BUNDLE_BASE64__';
+    const assetBundle=__EMBEDDED_ASSET_BUNDLE_JSON__;
 
     function decodeBase64Bytes(base64){const binary=atob(base64);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes}
-    function decodeBase64Utf8(base64){return new TextDecoder().decode(decodeBase64Bytes(base64))}
-    const assetBundle=JSON.parse(decodeBase64Utf8(EMBEDDED_ASSET_BUNDLE_BASE64));
+    async function decodeAssetBytes(asset){const embedded=decodeBase64Bytes(asset.base64);const encoding=asset.encoding||'identity';if(encoding==='identity')return embedded;if(encoding==='gzip'){if(!('DecompressionStream'in window))throw new Error('This browser does not support gzip decompression required by the embedded SQLite engine.');const stream=new Blob([embedded],{type:'application/gzip'}).stream().pipeThrough(new DecompressionStream('gzip'));return new Uint8Array(await new Response(stream).arrayBuffer())}throw new Error(`Unsupported embedded asset encoding: ${encoding}`)}
     const blobUrls=new Set();
     window.StandaloneAssets=Object.freeze({
       manifest:BUILD_MANIFEST,
       list(){return Object.entries(assetBundle.dependencies||{}).flatMap(([dependencyId,dependency])=>Object.keys(dependency.assets||{}).map(assetKey=>`${dependencyId}/${assetKey}`))},
       has(dependencyId,assetKey){return Boolean(assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey])},
-      bytes(dependencyId,assetKey){const asset=assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey];if(!asset)throw new Error(`Embedded asset not found: ${dependencyId}/${assetKey}`);return decodeBase64Bytes(asset.base64)},
-      blobUrl(dependencyId,assetKey){const asset=assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey];if(!asset)throw new Error(`Embedded asset not found: ${dependencyId}/${assetKey}`);const url=URL.createObjectURL(new Blob([this.bytes(dependencyId,assetKey)],{type:asset.mime||'application/octet-stream'}));blobUrls.add(url);return url},
-      async loadClassicScript(dependencyId,assetKey,globalName=''){const sourceUrl=this.blobUrl(dependencyId,assetKey);try{await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=sourceUrl;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load embedded script: ${dependencyId}/${assetKey}`));document.head.append(script)});return globalName?window[globalName]:true}finally{URL.revokeObjectURL(sourceUrl);blobUrls.delete(sourceUrl)}}
+      async bytes(dependencyId,assetKey){const asset=assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey];if(!asset)throw new Error(`Embedded asset not found: ${dependencyId}/${assetKey}`);return decodeAssetBytes(asset)},
+      async blobUrl(dependencyId,assetKey){const asset=assetBundle.dependencies?.[dependencyId]?.assets?.[assetKey];if(!asset)throw new Error(`Embedded asset not found: ${dependencyId}/${assetKey}`);const bytes=await this.bytes(dependencyId,assetKey);const url=URL.createObjectURL(new Blob([bytes],{type:asset.mime||'application/octet-stream'}));blobUrls.add(url);return url},
+      async loadClassicScript(dependencyId,assetKey,globalName=''){const sourceUrl=await this.blobUrl(dependencyId,assetKey);try{await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=sourceUrl;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load embedded script: ${dependencyId}/${assetKey}`));document.head.append(script)});return globalName?window[globalName]:true}finally{URL.revokeObjectURL(sourceUrl);blobUrls.delete(sourceUrl)}}
     });
     window.addEventListener('pagehide',()=>{blobUrls.forEach(url=>URL.revokeObjectURL(url));blobUrls.clear()});
 

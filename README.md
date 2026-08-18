@@ -236,6 +236,7 @@ See [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) for the offline verification model.
 ## Limitations
 
 - `sql.js` loads the SQLite database into browser memory. Very large databases depend on available device/browser memory and may be slow or fail to open.
+- The embedded `sql-asm.js` payload is gzip-compressed at build time and decompressed locally by the browser; it is still fully offline and single-file.
 - Row counting, relationship inference, and column profiling can take time on databases with large tables.
 - Relationship inference is heuristic and based partly on sampled values. A high confidence score does not make a candidate a real foreign key.
 - v1.0 is intentionally read-only and cannot edit records or save changes back into the SQLite file.
