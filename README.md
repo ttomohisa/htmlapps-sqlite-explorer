@@ -17,6 +17,8 @@ GitHub Pages delivers the initial HTML. After it loads, SQLite parsing, table br
 
 No installation or account is required.
 
+![SQLite Explorer browsing project records and inferred database relationships](assets/screenshot.png)
+
 ## Features
 
 - Open `.db`, `.sqlite`, `.sqlite3`, and other standard SQLite database files in the browser

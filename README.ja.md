@@ -19,6 +19,8 @@ GitHub Pagesから最初のHTMLを読み込んだ後、SQLiteの読み込み、�
 
 インストールやアカウント登録は不要です。
 
+![プロジェクトレコードと推定リレーションを表示したSQLite Explorer](assets/screenshot.png)
+
 ## 主な機能
 
 - `.db`、`.sqlite`、`.sqlite3` などの標準SQLiteファイルをブラウザーで開く
