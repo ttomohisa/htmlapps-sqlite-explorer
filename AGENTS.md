@@ -21,7 +21,7 @@ Do not add runtime `fetch`, XHR, WebSocket, EventSource, remote fonts, analytics
 Keep `connect-src 'none'`.
 
 ## SQLite safety
-v1.0 is read-only.
+v1.1.0 is read-only.
 Do not add mutation SQL, database write-back, or autosave without changing `APP_SPEC.md` first.
 Any inferred relationship must be clearly labelled as inferred.
 

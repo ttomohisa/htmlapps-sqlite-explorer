@@ -3,7 +3,7 @@
 [![GitHub Pages](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-sqlite-explorer/)
-[![Read only](https://img.shields.io/badge/v1.0-read%20only-16624f)](#read-only-design)
+[![Read only](https://img.shields.io/badge/v1.1.0-read%20only-16624f)](#read-only-design)
 
 [日本語版 README](README.ja.md)
 
@@ -13,11 +13,28 @@ A privacy-focused, single-HTML SQLite explorer for opening an unfamiliar databas
 
 ### [Open SQLite Explorer on GitHub Pages](https://ttomohisa.github.io/htmlapps-sqlite-explorer/)
 
-GitHub Pages delivers the initial HTML. After it loads, SQLite parsing, table browsing, profiling, relationship inference, SQL execution, query-plan analysis, and export are processed locally on your device. The SQLite file you select is not uploaded by the app.
+GitHub Pages delivers the initial HTML. After it loads, SQLite parsing, table browsing, profiling, relationship inference, SQL execution, query-plan analysis, export, and health checks all run locally on your device. The SQLite file you select is not uploaded by the app.
 
 No installation or account is required.
 
-![SQLite Explorer browsing project records and inferred database relationships](assets/screenshot.png)
+## Screenshots
+
+### English UI
+
+![SQLite Explorer English screenshot showing overview metrics, global search results, and database health](assets/screenshot-en.png)
+
+### 日本語 UI
+
+![SQLite Explorer Japanese screenshot showing overview metrics, global search results, and database health](assets/screenshot-ja.png)
+
+## What's new in v1.1.0
+
+- Database-wide value search for unknown schemas
+- Data Explorer upgrades: row filter, sortable columns, column visibility toggles, and resizable headers
+- Smart Cell Inspector with JSON/date/URL/UUID/Base64/BLOB detection
+- Record Relationship Explorer for moving from one row to related rows
+- Database Health score with structural warnings, `quick_check`, and `foreign_key_check`
+- ER diagram Focus Mode for isolating a table and its direct neighbors
 
 ## Features
 
@@ -25,6 +42,13 @@ No installation or account is required.
 - Database overview with table, view, index, row-count, page-size, encoding, and other metadata
 - **Table scale** view showing rows, columns, indexes, foreign keys, and primary-key warnings at a glance
 - Jump directly from the overview to a table in the Data Explorer
+- **Database-wide value search** across text and numeric columns without knowing the schema first
+- Row filtering, column sorting, column visibility toggles, and resizable columns in Data Explorer
+- **Smart Cell Inspector** for JSON, URLs, UUIDs, possible timestamps, Base64 candidates, and BLOBs
+- Inline PNG / JPEG / GIF / WebP BLOB previews
+- **Record Relationships** for following declared and inferred relationships from a selected row
+- **Database Health** combining structural warnings, `quick_check`, and `foreign_key_check`
+- ER diagram Focus Mode for showing only a selected table and its direct neighbors
 - Paginated table browsing without rendering the entire table into the DOM
 - Export table data and query results as CSV or JSON
 - Schema and DDL viewer
@@ -81,13 +105,18 @@ It includes:
 - Table-scale ranking with row, column, index, FK, and PK information
 - Relationships detected from declared and inferred foreign keys
 - Observations such as tables without primary keys and foreign-key columns that may lack a matching index
-- `PRAGMA quick_check`
+- Database-wide value search
+- Database Health score with structural checks, `PRAGMA quick_check`, and `PRAGMA foreign_key_check`
 
 ### Data Explorer
 
 - Select a table or view from the navigation or selector
 - Browse rows in pages of 100
-- Inspect `NULL` and BLOB values without modifying the database
+- Filter across the current table
+- Sort by clicking a column header
+- Toggle visible columns and resize headers
+- Click a cell to inspect JSON, dates, URLs, UUIDs, Base64 candidates, and common BLOB formats
+- Use the row `↗` action to follow records referenced by or referencing the current row
 - Export the selected table as CSV or JSON
 
 ### Schema & relationships
@@ -99,7 +128,7 @@ SQLite Explorer distinguishes between two kinds of relationships:
 
 For example, a column such as `orders.user_id` may be suggested as a relationship to `users.id` even when the source database does not declare a foreign key.
 
-Inferred relationships are shown with a confidence score and dashed lines. They are hints for exploration, not guaranteed schema facts.
+Inferred relationships are shown with a confidence score and dashed lines. Focus Mode can reduce the ER diagram to a selected table and its direct neighbors. Inferred relationships are hints for exploration, not guaranteed schema facts.
 
 ### Column profiling
 
@@ -135,7 +164,7 @@ For normal `SELECT` / `WITH` queries, SQLite Explorer also runs `EXPLAIN QUERY P
 
 ## Read-only design
 
-SQLite Explorer v1.0 intentionally does not edit the source database.
+SQLite Explorer v1.1.0 intentionally does not edit the source database.
 
 Statements such as `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `ALTER`, `DROP`, `REPLACE`, `VACUUM`, `ATTACH`, and other modifying operations are blocked before execution. Multi-statement input is also checked so a modifying statement cannot be appended after a read-only query.
 
@@ -241,9 +270,9 @@ See [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) for the offline verification model.
 - The embedded `sql-asm.js` payload is gzip-compressed at build time and decompressed locally by the browser; it is still fully offline and single-file.
 - Row counting, relationship inference, and column profiling can take time on databases with large tables.
 - Relationship inference is heuristic and based partly on sampled values. A high confidence score does not make a candidate a real foreign key.
-- v1.0 is intentionally read-only and cannot edit records or save changes back into the SQLite file.
+- v1.1.0 is intentionally read-only and cannot edit records or save changes back into the SQLite file.
 - Exporting a very large table creates the export data in browser memory and may require substantial memory.
-- BLOB values are not presented as rich previews; the explorer focuses on database structure and tabular inspection.
+- Common image BLOBs (PNG / JPEG / GIF / WebP) can be previewed inline, but binary inspection is still intentionally lightweight.
 - SQLCipher or other encrypted/non-standard SQLite database formats are not supported by the bundled standard SQLite engine.
 - ER diagrams with a very large number of tables can become visually dense.
 

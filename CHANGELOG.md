@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2026-08-25
+- Added database-wide value search.
+- Added table filtering, sortable columns, column visibility controls, and resizable headers.
+- Added Smart Cell Inspector with JSON/date/URL/UUID/Base64/BLOB detection and image previews.
+- Added Record Relationship Explorer for declared and inferred relationships.
+- Added Database Health score with structural checks, `quick_check`, and `foreign_key_check`.
+- Added ER diagram focus mode and lightweight database fingerprinting.
+
 ## Unreleased
 
 - Gzip-compressed the embedded `sql-asm.js` payload and removed the outer Base64 layer around the asset bundle, reducing standalone HTML size without changing the UI or offline behavior.

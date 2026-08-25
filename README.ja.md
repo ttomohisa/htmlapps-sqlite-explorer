@@ -3,7 +3,7 @@
 [![GitHub Pages](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-sqlite-explorer/)
-[![Read only](https://img.shields.io/badge/v1.0-read%20only-16624f)](#読み取り専用設計)
+[![Read only](https://img.shields.io/badge/v1.1.0-read%20only-16624f)](#読み取り専用設計)
 
 [English README](README.md)
 
@@ -15,11 +15,28 @@
 
 ### [GitHub PagesでSQLite Explorerを開く](https://ttomohisa.github.io/htmlapps-sqlite-explorer/)
 
-GitHub Pagesから最初のHTMLを読み込んだ後、SQLiteの読み込み、テーブル閲覧、プロファイル、リレーション推定、SQL実行、Query Plan解析、CSV / JSON出力は端末内で処理されます。選択したSQLiteファイルが、このアプリからサーバーへアップロードされることはありません。
+GitHub Pagesから最初のHTMLを読み込んだ後は、SQLiteの読み込み、テーブル閲覧、プロファイル、リレーション推定、SQL実行、Query Plan解析、CSV / JSON出力、Health Checkまで、すべて端末内で処理されます。選択したSQLiteファイルが、このアプリからサーバーへアップロードされることはありません。
 
 インストールやアカウント登録は不要です。
 
-![プロジェクトレコードと推定リレーションを表示したSQLite Explorer](assets/screenshot.png)
+## スクリーンショット
+
+### English UI
+
+![SQLite Explorer English screenshot showing overview metrics, global search results, and database health](assets/screenshot-en.png)
+
+### 日本語 UI
+
+![SQLite Explorerの日本語UIスクリーンショット。Overview、DB全体検索、Database Healthを表示](assets/screenshot-ja.png)
+
+## v1.1.0 の主な追加点
+
+- **DB全体横断検索**：スキーマが分からなくても値から探せる
+- **Data Explorer強化**：行検索、列ソート、列表示ON/OFF、列幅調整
+- **Smart Cell Inspector**：JSON / 日時 / URL / UUID / Base64 / BLOBの自動判定
+- **Record Relationships**：1行から関連レコードへ辿れる
+- **Database Health**：構造チェック、`quick_check`、`foreign_key_check` を集約
+- **ER図 Focus Mode**：対象テーブルと直接関連するテーブルだけに絞り込み
 
 ## 主な機能
 
@@ -27,6 +44,13 @@ GitHub Pagesから最初のHTMLを読み込んだ後、SQLiteの読み込み、�
 - テーブル、View、Index、Trigger、総行数、ページサイズ、EncodingなどをまとめたDatabase Overview
 - 行数・列数・Index数・FK数・PK有無をまとめて見られる **「テーブル規模」**
 - Overviewのテーブル一覧からData Explorerへ直接移動
+- **DB全体横断検索**：テーブル名やスキーマを知らなくても、文字・数値列から値を横断検索
+- Data Explorerで行検索、列ソート、列表示ON/OFF、列幅調整
+- **Smart Cell Inspector**：JSON、URL、UUID、日時候補、Base64候補、BLOBを自動判定
+- PNG / JPEG / GIF / WebPのBLOBをその場でプレビュー
+- **Record Relationships**：1行からDefined FK / Inferred relationshipを使って関連レコードへ移動
+- **Database Health**：PKなし、FK列のIndex不足、`quick_check`、`foreign_key_check`をまとめて確認
+- ER図のFocus Modeで、指定テーブルと直接関連するテーブルだけを表示
 - テーブル全体をDOMへ展開せず、100行単位でページング表示
 - テーブルやSQL結果をCSV / JSONへ書き出し
 - Schema / DDL表示
@@ -83,7 +107,8 @@ Overviewは、テーブルを1つずつ開く前に **「これはどんなDBな
 - 行数・列数・Index・FK・PK有無を一覧できる「テーブル規模」
 - 定義済みFKと推定リレーション
 - 主キーがないテーブルや、FK列に対応するIndexが見当たらない場合などの確認候補
-- `PRAGMA quick_check`
+- DB全体横断検索
+- Database Healthスコアと構造チェック / `PRAGMA quick_check` / `PRAGMA foreign_key_check`
 
 「テーブル規模」の行をクリックすると、そのテーブルをData Explorerで直接開けます。
 
@@ -91,7 +116,11 @@ Overviewは、テーブルを1つずつ開く前に **「これはどんなDBな
 
 - ナビゲーションまたはセレクターからTable / Viewを選択
 - 100行単位でページング表示
-- `NULL` やBLOBを元データを書き換えずに確認
+- テーブル内の横断フィルター
+- 列見出しクリックで昇順 / 降順ソート
+- 表示列のON/OFFと列幅調整
+- セルクリックでSmart Cell Inspectorを開き、JSON・日時・URL・UUID・BLOBなどを判定
+- 行左端の `↗` から、そのレコードを参照する / 参照される関連レコードを探索
 - 選択したテーブルをCSV / JSONとして書き出し
 
 ### Schema & Relationships
@@ -103,7 +132,7 @@ SQLite Explorerでは、リレーションを2種類に分けて表示します�
 
 たとえばDB側にFOREIGN KEY制約がなくても、`orders.user_id` の値が `users.id` と高い割合で一致する場合、関係候補として提示できます。
 
-定義済みFKはER図上で実線、推定リレーションは点線で表示し、推定側にはConfidenceを表示します。
+定義済みFKはER図上で実線、推定リレーションは点線で表示し、推定側にはConfidenceを表示します。Focus Modeでは、選んだテーブルと直接関連するテーブルだけに絞ってER図を確認できます。
 
 **推定リレーションは探索を助けるための補助情報であり、実際の外部キーを保証するものではありません。**
 
@@ -141,7 +170,7 @@ SQL画面は読み取り専用です。
 
 ## 読み取り専用設計
 
-SQLite Explorer v1.0は、**知らないDBを安心して調べること**を優先して、意図的に読み取り専用にしています。
+SQLite Explorer v1.1.0は、**知らないDBを安心して調べること**を優先して、意図的に読み取り専用にしています。
 
 `INSERT`、`UPDATE`、`DELETE`、`CREATE`、`ALTER`、`DROP`、`REPLACE`、`VACUUM`、`ATTACH` など、DBを変更するSQLは実行前にブロックします。
 
@@ -247,9 +276,9 @@ GitHub Pages版では、最初にHTMLを表示するための通信は発生し�
 - 内包する `sql-asm.js` はビルド時にgzip圧縮し、ブラウザー内で展開します。単一HTML・完全オフラインの構成は変わりません。
 - 大きなテーブルが多いDBでは、行数取得、Relationship inference、Column Profilerに時間がかかる場合があります。
 - 推定リレーションは列名・型・サンプル値から計算するヒューリスティックです。Confidenceが高くても、本物の外部キーであることを保証しません。
-- v1.0は読み取り専用です。レコード編集やSQLiteファイルへの変更保存には対応していません。
+- v1.1.0は読み取り専用です。レコード編集やSQLiteファイルへの変更保存には対応していません。
 - 非常に大きなテーブルをCSV / JSONへ書き出す場合、ブラウザー内で出力データを生成するためメモリを多く使用します。
-- BLOBは画像などとして詳細プレビューするのではなく、DB構造・テーブルデータの確認を中心にしています。
+- PNG / JPEG / GIF / WebP などの代表的な画像BLOBはその場でプレビューできますが、バイナリ解析自体は軽量な範囲に留めています。
 - SQLCipherなどで暗号化されたDBや、標準SQLiteではない独自形式には対応していません。
 - テーブル数が非常に多いDBではER図が密集して見づらくなる場合があります。
 
