@@ -54,7 +54,7 @@ if (Test-Path $selfExtract) { & (Join-Path $Root "scripts\verify-self-extract.ps
 $node = Get-Command node -ErrorAction Stop
 $previousTestHtml = $env:SQLITE_TEST_HTML
 try {
-  foreach ($relative in @("src/index.template.html", "dist/index.html", "sqlite-explorer.html")) {
+  foreach ($relative in @("src/index.template.html", "dist/index.html", "sqlite-explorer.html", "dist/index.self-extract.html")) {
     $env:SQLITE_TEST_HTML = Join-Path $Root $relative
     & $node.Source --test (Join-Path $Root "scripts/test-query-results.cjs")
     if ($LASTEXITCODE -ne 0) { throw "Query result regression tests failed: $relative" }

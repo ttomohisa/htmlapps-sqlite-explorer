@@ -7,7 +7,14 @@ const assert = require('node:assert/strict');
 // Execute the real application functions with synthetic data and small UI/IO
 // doubles. No browser, real database, or network connection is used here.
 const sourcePath = process.env.SQLITE_TEST_HTML || path.join(__dirname, '../src/index.template.html');
-const source = fs.readFileSync(sourcePath, 'utf8');
+let source = fs.readFileSync(sourcePath, 'utf8');
+if (source.includes('id="self-extract-payload"')) {
+  const payload = source.match(/<script id="self-extract-payload" type="application\/octet-stream">([A-Za-z0-9+/=\r\n]+)<\/script>/);
+  assert.ok(payload, 'Self-extract payload must exist');
+  const restored = require('node:zlib').gunzipSync(Buffer.from(payload[1], 'base64'));
+  assert.deepEqual(restored, fs.readFileSync(path.join(__dirname, '../dist/index.html')), 'Restored HTML must match readable build byte-for-byte');
+  source = restored.toString('utf8');
+}
 const start = source.indexOf('    const T = {');
 const end = source.indexOf("    $('#dataTableSelect').onchange=");
 assert.ok(start >= 0 && end > start, 'Application function boundaries must exist');
@@ -27,14 +34,19 @@ function harness(lang = 'en') {
     if (!elements.has(id)) elements.set(id, {
       value: '', innerHTML: '', textContent: '', disabled: true, hidden: false,
       classList: { add() {}, remove() {}, toggle() {} },
+      addEventListener() {}, setAttribute(name, value) { this[name] = value; },
     });
     return elements.get(id);
   };
-  const sandbox = { document: { querySelector: $, querySelectorAll: () => [] }, Uint8Array, Intl, performance,
+  const sandbox = { document: { querySelector: $, querySelectorAll: () => [], documentElement: {} },
+    localStorage: { setItem() {} }, Uint8Array, Intl, performance,
     console: { error() {} }, setTimeout, clearTimeout };
   vm.createContext(sandbox);
   vm.runInContext(source.slice(start, end) +
-    '\nglobalThis.api = { state, tableHtml, exportRows, resetFile, openFile, runSql, tr };', sandbox);
+    '\nglobalThis.api = { state, tableHtml, exportRows, resetFile, openFile, runSql, tr, applyLanguage };', sandbox);
+  const bindingsEnd = source.indexOf("    $('#brandName').textContent=", end);
+  assert.ok(bindingsEnd > end, 'Event-binding boundary must exist');
+  vm.runInContext(source.slice(end, bindingsEnd), sandbox);
   sandbox.nextFrame = () => Promise.resolve();
   sandbox.ensureSql = async () => sandbox.api.state.SQL;
   sandbox.inspectDatabase = async () => {};
@@ -50,6 +62,10 @@ function seedPreviousQuery(h) {
   let closes = 0;
   h.state.db = { close() { closes++; } };
   h.state.file = { name: 'previous.sqlite' };
+  h.state.queryPage = 2;
+  h.$('#queryPagination').hidden = false;
+  h.$('#queryJsonWarning').hidden = false;
+  h.$('#queryExportHint').hidden = false;
   h.state.lastQuery = { columns: ['item'], rows: [['fictional-old-value']] };
   h.$('#queryResults').innerHTML = 'fictional-old-value';
   h.$('#queryRows').textContent = '1 row';
@@ -61,6 +77,7 @@ function seedPreviousQuery(h) {
 }
 
 function assertNoCachedQuery(h) {
+  assertPagerCleared(h);
   assert.equal(h.state.lastQuery, null);
   assert.equal(h.$('#queryRows').textContent, '—');
   assert.equal(h.$('#queryTime').textContent, '—');
@@ -230,4 +247,199 @@ test('zero-row SQL result disables exports and replaces old rows', () => {
   assert.doesNotMatch(h.$('#queryResults').innerHTML, /fictional-old-value/);
   h.exportRows('query-result', 'csv', h.state.lastQuery);
   assert.equal(h.downloads.length, 0);
+});
+
+function runSyntheticQuery(h, count, columns = ['n']) {
+  const rows = Array.from({ length: count }, (_, i) => columns.map((_, c) => i + 1 + c));
+  let calls = 0;
+  h.state.db = { exec() { calls++; return count ? [{ columns, values: rows }] : []; }, close() {} };
+  h.$('#queryEditor').value = 'SELECT n FROM fictional_items';
+  h.runSql();
+  return { rows, calls: () => calls };
+}
+
+function assertPagerCleared(h) {
+  assert.equal(h.state.queryPage, 0);
+  assert.equal(h.$('#queryPagination').hidden, true);
+  assert.equal(h.$('#queryPageInfo').textContent, '');
+  assert.equal(h.$('#queryPrevPage').disabled, true);
+  assert.equal(h.$('#queryNextPage').disabled, true);
+  assert.equal(h.$('#queryExportHint').hidden, true);
+  assert.equal(h.$('#queryJsonWarning').hidden, true);
+}
+
+test('SQL pager and export notices have native, localized, accessible markup', () => {
+  assert.match(source, /id="queryPagination"[^>]*hidden/);
+  assert.match(source, /#queryPagination\[hidden\]\{display:none\}/);
+  assert.match(source, /id="queryPageInfo"[^>]*role="status"/);
+  for (const [id, key] of [['queryPrevPage', 'previous'], ['queryNextPage', 'next']]) {
+    assert.match(source, new RegExp(`<button[^>]*id="${id}"[^>]*type="button"[^>]*data-i18n="${key}"[^>]*disabled`));
+  }
+  assert.match(source, /id="exportQueryJson"[^>]*aria-describedby="queryJsonWarning"/);
+  assert.match(source, /id="queryJsonWarning"[^>]*data-i18n="duplicateQueryColumns"[^>]*hidden/);
+  assert.match(source, /id="queryExportHint"[^>]*data-i18n="queryExportAll"[^>]*hidden/);
+});
+
+for (const count of [0, 1, 99, 100, 101, 205]) test(`SQL result pager handles ${count} rows`, () => {
+  const h = harness();
+  runSyntheticQuery(h, count);
+  assert.equal(cellValues(h.$('#queryResults').innerHTML).length, Math.min(count, 100));
+  assert.equal(h.state.queryPage, 0);
+  assert.equal(h.state.lastQuery.rows.length, count);
+  assert.equal(h.$('#queryPagination').hidden, count === 0);
+  assert.equal(h.$('#queryPageInfo').textContent, count ? `1–${Math.min(count, 100)} / ${count}` : '');
+  assert.equal(h.$('#queryPrevPage').disabled, true);
+  assert.equal(h.$('#queryNextPage').disabled, count <= 100);
+  assert.equal(h.$('#queryExportHint').hidden, count === 0);
+});
+
+test('205 cached rows page 100/100/5 without new SQL or table state changes', () => {
+  const h = harness();
+  h.state.page = 7;
+  h.state.pageSize = 25;
+  const query = runSyntheticQuery(h, 205);
+  h.state.db.prepare = () => { throw new Error('Pagination must not prepare SQL'); };
+  h.sandbox.objectRows = () => { throw new Error('Pagination must not refresh the plan'); };
+  const timing = h.$('#queryTime').textContent;
+  const plan = h.$('#queryPlan').innerHTML;
+  const seen = [...cellValues(h.$('#queryResults').innerHTML)];
+  assert.equal(seen.length, 100);
+  h.$('#queryNextPage').onclick();
+  assert.equal(h.$('#queryPageInfo').textContent, '101–200 / 205');
+  seen.push(...cellValues(h.$('#queryResults').innerHTML));
+  h.$('#queryNextPage').onclick();
+  assert.equal(h.$('#queryPageInfo').textContent, '201–205 / 205');
+  assert.equal(h.$('#queryNextPage').disabled, true);
+  seen.push(...cellValues(h.$('#queryResults').innerHTML));
+  assert.deepEqual(seen, Array.from({ length: 205 }, (_, i) => String(i + 1)));
+  h.$('#queryNextPage').onclick();
+  assert.equal(h.state.queryPage, 2);
+  h.$('#queryPrevPage').onclick();
+  assert.equal(h.$('#queryPageInfo').textContent, '101–200 / 205');
+  h.$('#queryPrevPage').onclick();
+  h.$('#queryPrevPage').onclick();
+  assert.equal(h.state.queryPage, 0);
+  assert.equal(h.$('#queryPrevPage').disabled, true);
+  assert.equal(query.calls(), 1);
+  assert.equal(h.$('#queryRows').textContent, '205 rows');
+  assert.equal(h.$('#queryTime').textContent, timing);
+  assert.equal(h.$('#queryPlan').innerHTML, plan);
+  assert.equal(h.state.page, 7);
+  assert.equal(h.state.pageSize, 25);
+});
+
+test('CSV and JSON controls export all rows while viewing the second SQL page', () => {
+  const h = harness();
+  runSyntheticQuery(h, 205);
+  assert.equal(typeof h.$('#queryNextPage').onclick, 'function');
+  h.$('#queryNextPage').onclick();
+  h.$('#exportQueryCsv').onclick();
+  h.$('#exportQueryJson').onclick();
+  assert.equal(h.downloads[0].text, '\uFEFFn\r\n' + Array.from({ length: 205 }, (_, i) => i + 1).join('\r\n'));
+  assert.deepEqual(JSON.parse(h.downloads[1].text), Array.from({ length: 205 }, (_, i) => ({ n: i + 1 })));
+});
+
+test('each successful query starts on page one, including short and repeated results', () => {
+  const h = harness();
+  for (const count of [205, 205, 1, 100, 0]) {
+    h.state.queryPage = 2;
+    runSyntheticQuery(h, count);
+    assert.equal(h.state.queryPage, 0);
+    assert.equal(h.$('#queryPageInfo').textContent, count ? `1–${Math.min(100, count)} / ${count}` : '');
+  }
+});
+
+test('query execution invalidates the previous page before accessing SQLite', () => {
+  const h = harness();
+  seedPreviousQuery(h);
+  h.state.queryPage = 2;
+  h.state.db.exec = () => { assertNoCachedQuery(h); assertPagerCleared(h); return []; };
+  h.$('#queryEditor').value = 'SELECT 1 WHERE 0';
+  h.runSql();
+  assert.equal(h.$('#queryRows').textContent, '0 rows');
+});
+
+for (const kind of ['ordinary error', 'blocked SQL', 'reset']) test(`${kind} clears the SQL pager and retained pager callbacks stay inert`, () => {
+  const h = harness();
+  runSyntheticQuery(h, 205);
+  assert.equal(typeof h.$('#queryNextPage').onclick, 'function');
+  const next = h.$('#queryNextPage').onclick;
+  next();
+  if (kind === 'reset') h.resetFile();
+  else {
+    h.$('#queryEditor').value = kind === 'blocked SQL' ? 'DELETE FROM fictional_items' : 'SELECT missing';
+    h.state.db.exec = () => { throw new Error('missing'); };
+    h.runSql();
+  }
+  assertPagerCleared(h);
+  const before = h.$('#queryResults').innerHTML;
+  next();
+  h.$('#queryPrevPage').onclick();
+  assertPagerCleared(h);
+  assert.equal(h.$('#queryResults').innerHTML, before);
+});
+
+for (const lang of ['en', 'ja']) test(`duplicate names disable JSON with an actionable explanation (${lang})`, () => {
+  const h = harness(lang);
+  h.state.db = { exec: () => [{ columns: ['id', 'id', 'id_2'], values: [[11, 22, null]] }] };
+  h.$('#queryEditor').value = 'SELECT 11 AS id, 22 AS id, NULL AS id_2';
+  h.runSql();
+  assert.equal(h.$('#exportQueryJson').disabled, true);
+  assert.equal(h.$('#exportQueryCsv').disabled, false);
+  assert.equal(h.$('#queryJsonWarning').hidden, false);
+  assert.match(h.$('#queryJsonWarning').textContent, /AS/);
+  assert.match(h.$('#queryJsonWarning').textContent, /CSV/);
+  assert.equal(h.$('#queryJsonWarning').textContent, h.tr('duplicateQueryColumns'));
+  if (lang === 'ja') assert.match(h.$('#queryJsonWarning').textContent, /列名/);
+  else assert.match(h.$('#queryJsonWarning').textContent, /duplicate column names/i);
+  assert.deepEqual(cellValues(h.$('#queryResults').innerHTML), ['11', '22', 'NULL']);
+  h.$('#exportQueryCsv').onclick();
+  assert.equal(h.downloads[0].text, '\uFEFFid,id,id_2\r\n11,22,');
+  h.$('#exportQueryJson').onclick();
+  assert.equal(h.downloads.length, 1);
+  assert.equal(h.notices.at(-1), h.tr('duplicateQueryColumns'));
+  runSyntheticQuery(h, 1, ['id', 'ID', 'id_2']);
+  assert.equal(h.$('#exportQueryJson').disabled, false);
+  assert.equal(h.$('#queryJsonWarning').hidden, true);
+});
+
+for (const columns of [['id', 'id'], ['', ''], ['__proto__', '__proto__'], ['<script>', '<script>']]) test(`direct JSON handler rejects duplicate names ${JSON.stringify(columns)}`, () => {
+  const h = harness();
+  h.exportRows('query-result', 'json', { columns, rows: [[11, 22]] });
+  assert.equal(h.downloads.length, 0);
+  assert.equal(h.notices.at(-1), h.tr('duplicateQueryColumns'));
+});
+
+test('unique JSON names preserve the object-array schema and all existing value formats', () => {
+  const h = harness();
+  const columns = ['id', 'ID', 'id_2', '', '__proto__', 'constructor', '<script>'];
+  const row = [11, 22, null, 'line\nbreak "quoted"', new Uint8Array([1, 2]), 'value', 0];
+  h.exportRows('query-result', 'json', { columns, rows: [row] });
+  assert.deepEqual(JSON.parse(h.downloads[0].text), [Object.fromEntries(columns.map((name, i) => [name, i === 4 ? '<BLOB 2 bytes>' : row[i]]))]);
+});
+
+test('language changes refresh SQL messages while retaining cached data, page, timing, and plan', () => {
+  const h = harness();
+  const query = runSyntheticQuery(h, 205, ['id', 'id']);
+  assert.equal(typeof h.$('#queryNextPage').onclick, 'function');
+  h.$('#queryNextPage').onclick();
+  for (const name of ['renderOverview', 'renderRelations', 'renderHealth', 'populateErdFocus']) h.sandbox[name] = () => {};
+  const cached = h.state.lastQuery, timing = h.$('#queryTime').textContent, plan = h.$('#queryPlan').innerHTML;
+  for (const lang of ['ja', 'en']) {
+    h.applyLanguage(lang);
+    assert.equal(h.state.lastQuery, cached);
+    assert.equal(h.state.queryPage, 1);
+    assert.equal(h.$('#queryPageInfo').textContent, '101–200 / 205');
+    assert.equal(h.$('#queryJsonWarning').textContent, h.tr('duplicateQueryColumns'));
+    assert.equal(h.$('#queryExportHint').textContent, h.tr('queryExportAll'));
+    assert.equal(h.$('#queryTime').textContent, timing);
+    assert.equal(h.$('#queryPlan').innerHTML, plan);
+  }
+  assert.equal(query.calls(), 1);
+});
+
+test('large result range uses exact total counts rather than compact rounded notation', () => {
+  const h = harness();
+  runSyntheticQuery(h, 100001);
+  assert.equal(h.$('#queryPageInfo').textContent, '1–100 / 100,001');
 });
