@@ -25,9 +25,9 @@ A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite da
 5. Declared foreign keys
 6. Relationship inference
 7. Column profiler
-8. Read-only SQL editor
+8. Read-only SQL editor with cached 100-row result pagination
 9. EXPLAIN QUERY PLAN
-10. CSV / JSON export
+10. CSV / JSON export (complete SQL results; JSON requires unique column names)
 11. Database-wide value search
 12. Sort / filter / column visibility in the data browser
 13. Smart Cell Inspector for JSON, dates, URLs, UUIDs, Base64 candidates, and common BLOB formats
@@ -69,5 +69,7 @@ Below 820px:
 - Table data pages without loading the entire table into DOM.
 - Relationship inference does not replace declared FK data.
 - Write SQL is rejected before execution.
+- SQL result pages render at most 100 cached rows without rerunning queries. New queries, errors, reset, and file replacement clear the previous page state.
+- Duplicate result column names disable JSON export with an EN/JA explanation and a download-handler guard. CSV remains positional; distinct-name JSON keeps its object-array format.
 - Language switch updates visible navigation/help text.
 - `dist/index.self-extract.html` has readable loader text, the same embedded favicon as `dist/index.html`, and restores `dist/index.html` byte-for-byte.

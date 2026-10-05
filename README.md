@@ -155,6 +155,10 @@ Supported categories include:
 
 For normal `SELECT` / `WITH` queries, SQLite Explorer also runs `EXPLAIN QUERY PLAN` and presents the plan alongside the result.
 
+SQL results are displayed in pages of 100 rows. Previous / Next browse the cached result without running SQL again; the row count and query time describe the complete query. CSV and JSON export all result rows, regardless of the displayed page. Pagination limits rendered rows, not query execution or result memory.
+
+JSON export requires unique column names. If a query returns duplicate names, JSON is disabled to prevent values being overwritten; use unique `AS` aliases or export CSV, which preserves every column in its original position.
+
 #### Keyboard shortcut
 
 | Shortcut | Action |
