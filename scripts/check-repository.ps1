@@ -48,4 +48,18 @@ if ($ForceDownload) { $buildArguments.ForceDownload = $true }
 
 $selfExtract = Join-Path $Root "dist\index.self-extract.html"
 if (Test-Path $selfExtract) { & (Join-Path $Root "scripts\verify-self-extract.ps1") -Path $selfExtract -ExpectedSourcePath (Join-Path $Root "dist\index.html") }
+
+# Development/CI regressions use Node's built-in test runner; the standalone
+# builder itself still needs only PowerShell and tar.
+$node = Get-Command node -ErrorAction Stop
+$previousTestHtml = $env:SQLITE_TEST_HTML
+try {
+  foreach ($relative in @("src/index.template.html", "dist/index.html", "sqlite-explorer.html")) {
+    $env:SQLITE_TEST_HTML = Join-Path $Root $relative
+    & $node.Source --test (Join-Path $Root "scripts/test-query-results.cjs")
+    if ($LASTEXITCODE -ne 0) { throw "Query result regression tests failed: $relative" }
+  }
+} finally {
+  $env:SQLITE_TEST_HTML = $previousTestHtml
+}
 Write-Host "[OK] Repository check passed." -ForegroundColor Green
