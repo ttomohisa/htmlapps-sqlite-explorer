@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 2026-10-09
+
+- Normalize the app icon background to `#16624f` with 25% corner radii, and keep the asset, header and favicon consistent without changing the artwork.
+
 ## 1.1.0 - 2026-08-25
 - Added database-wide value search.
 - Added table filtering, sortable columns, column visibility controls, and resizable headers.
