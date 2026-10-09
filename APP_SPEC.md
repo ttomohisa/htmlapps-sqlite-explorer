@@ -1,7 +1,7 @@
 # APP_SPEC.md
 
 ## Product
-SQLite Explorer v1.1.0
+SQLite Explorer v1.1.1
 
 ## Goal
 A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite database and quickly understand its structure and data without uploading it.
@@ -13,7 +13,7 @@ A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite da
 - Must work from `file://` and static hosting.
 - Japanese and English live in the same HTML.
 - No dark mode.
-- v1.1.0 is read-only and never writes back to the source database.
+- v1.1.1 is read-only and never writes back to the source database.
 - Third-party dependencies are pinned and embedded by the build.
 - The self-extract loader is ASCII-only, inherits the embedded favicon from `dist/index.html`, and restores the standalone HTML byte-for-byte.
 
