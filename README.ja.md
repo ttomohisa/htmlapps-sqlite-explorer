@@ -1,9 +1,11 @@
 # SQLite Explorer
 
+Overview の長いファイル名は折り返して表示します。幅や高さの狭い画面でも列メニュー内をスクロールでき、Escape で閉じると列メニューにフォーカスが戻ります。並び替え後もキーボードのフォーカスを維持します。
+
 [![GitHub Pages](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-sqlite-explorer/)
-[![Read only](https://img.shields.io/badge/v1.1.1-read%20only-16624f)](#読み取り専用設計)
+[![Read only](https://img.shields.io/badge/v1.1.2-read%20only-16624f)](#読み取り専用設計)
 
 [English README](README.md)
 
@@ -174,7 +176,7 @@ JSON出力には一意の列名が必要です。列名が重複する場合は�
 
 ## 読み取り専用設計
 
-SQLite Explorer v1.1.1は、**知らないDBを安心して調べること**を優先して、意図的に読み取り専用にしています。
+SQLite Explorer v1.1.2は、**知らないDBを安心して調べること**を優先して、意図的に読み取り専用にしています。
 
 `INSERT`、`UPDATE`、`DELETE`、`CREATE`、`ALTER`、`DROP`、`REPLACE`、`VACUUM`、`ATTACH` など、DBを変更するSQLは実行前にブロックします。
 
@@ -280,7 +282,7 @@ GitHub Pages版では、最初にHTMLを表示するための通信は発生し�
 - 内包する `sql-asm.js` はビルド時にgzip圧縮し、ブラウザー内で展開します。単一HTML・完全オフラインの構成は変わりません。
 - 大きなテーブルが多いDBでは、行数取得、Relationship inference、Column Profilerに時間がかかる場合があります。
 - 推定リレーションは列名・型・サンプル値から計算するヒューリスティックです。Confidenceが高くても、本物の外部キーであることを保証しません。
-- v1.1.1は読み取り専用です。レコード編集やSQLiteファイルへの変更保存には対応していません。
+- v1.1.2は読み取り専用です。レコード編集やSQLiteファイルへの変更保存には対応していません。
 - 非常に大きなテーブルをCSV / JSONへ書き出す場合、ブラウザー内で出力データを生成するためメモリを多く使用します。
 - PNG / JPEG / GIF / WebP などの代表的な画像BLOBはその場でプレビューできますが、バイナリ解析自体は軽量な範囲に留めています。
 - SQLCipherなどで暗号化されたDBや、標準SQLiteではない独自形式には対応していません。

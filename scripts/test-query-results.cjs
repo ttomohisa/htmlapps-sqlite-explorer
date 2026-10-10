@@ -38,8 +38,8 @@ function harness(lang = 'en') {
     });
     return elements.get(id);
   };
-  const sandbox = { document: { querySelector: $, querySelectorAll: () => [], documentElement: {} },
-    localStorage: { setItem() {} }, Uint8Array, Intl, performance,
+  const sandbox = { document: { querySelector: $, querySelectorAll: () => [], documentElement: {}, addEventListener() {} },
+    window: { addEventListener() {} }, localStorage: { setItem() {} }, Uint8Array, Intl, performance,
     console: { error() {} }, setTimeout, clearTimeout };
   vm.createContext(sandbox);
   vm.runInContext(source.slice(start, end) +

@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.2 - 2026-10-10
+
+- Wrap long Overview filenames and allow narrow grid/table-scale columns to shrink without page overflow.
+- Bound the Columns menu in narrow/short viewports; close it on Escape, outside click, or resize, restoring summary focus on Escape.
+- Retain keyboard focus on the replacement sort button after table rerender without changing sort order.
+- Lock background scrolling for open modals while preserving existing dialog sizing.
+- Add layout, menu lifecycle, sort-focus, and existing shield-badge regressions.
+
 ## 1.1.1 - 2026-10-09
 
 - Normalize the app icon background to `#16624f` with 25% corner radii, and keep the asset, header and favicon consistent without changing the artwork.
