@@ -62,4 +62,7 @@ try {
 } finally {
   $env:SQLITE_TEST_HTML = $previousTestHtml
 }
+& node (Join-Path $Root "scripts/test-layout-controls.cjs")
+if ($LASTEXITCODE -ne 0) { throw "Layout control regression tests failed." }
+
 Write-Host "[OK] Repository check passed." -ForegroundColor Green

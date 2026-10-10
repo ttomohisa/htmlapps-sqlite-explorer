@@ -1,9 +1,11 @@
 # SQLite Explorer
 
+Long filenames wrap in Overview. In narrow or short windows, Columns stays inside the viewport and scrolls; Escape closes it and returns focus to Columns. Table sorting retains keyboard focus.
+
 [![GitHub Pages](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-sqlite-explorer/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-sqlite-explorer/)
-[![Read only](https://img.shields.io/badge/v1.1.1-read%20only-16624f)](#read-only-design)
+[![Read only](https://img.shields.io/badge/v1.1.2-read%20only-16624f)](#read-only-design)
 
 [日本語版 README](README.ja.md)
 
@@ -168,7 +170,7 @@ JSON export requires unique column names. If a query returns duplicate names, JS
 
 ## Read-only design
 
-SQLite Explorer v1.1.1 intentionally does not edit the source database.
+SQLite Explorer v1.1.2 intentionally does not edit the source database.
 
 Statements such as `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `ALTER`, `DROP`, `REPLACE`, `VACUUM`, `ATTACH`, and other modifying operations are blocked before execution. Multi-statement input is also checked so a modifying statement cannot be appended after a read-only query.
 
@@ -274,7 +276,7 @@ See [VERIFY_OFFLINE.md](VERIFY_OFFLINE.md) for the offline verification model.
 - The embedded `sql-asm.js` payload is gzip-compressed at build time and decompressed locally by the browser; it is still fully offline and single-file.
 - Row counting, relationship inference, and column profiling can take time on databases with large tables.
 - Relationship inference is heuristic and based partly on sampled values. A high confidence score does not make a candidate a real foreign key.
-- v1.1.1 is intentionally read-only and cannot edit records or save changes back into the SQLite file.
+- v1.1.2 is intentionally read-only and cannot edit records or save changes back into the SQLite file.
 - Exporting a very large table creates the export data in browser memory and may require substantial memory.
 - Common image BLOBs (PNG / JPEG / GIF / WebP) can be previewed inline, but binary inspection is still intentionally lightweight.
 - SQLCipher or other encrypted/non-standard SQLite database formats are not supported by the bundled standard SQLite engine.

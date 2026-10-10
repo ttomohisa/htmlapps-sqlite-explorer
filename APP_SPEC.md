@@ -1,7 +1,7 @@
 # APP_SPEC.md
 
 ## Product
-SQLite Explorer v1.1.1
+SQLite Explorer v1.1.2
 
 ## Goal
 A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite database and quickly understand its structure and data without uploading it.
@@ -13,7 +13,7 @@ A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite da
 - Must work from `file://` and static hosting.
 - Japanese and English live in the same HTML.
 - No dark mode.
-- v1.1.1 is read-only and never writes back to the source database.
+- v1.1.2 is read-only and never writes back to the source database.
 - Third-party dependencies are pinned and embedded by the build.
 - The self-extract loader is ASCII-only, inherits the embedded favicon from `dist/index.html`, and restores the standalone HTML byte-for-byte.
 
@@ -73,3 +73,10 @@ Below 820px:
 - Duplicate result column names disable JSON export with an EN/JA explanation and a download-handler guard. CSV remains positional; distinct-name JSON keeps its object-array format.
 - Language switch updates visible navigation/help text.
 - `dist/index.self-extract.html` has readable loader text, the same embedded favicon as `dist/index.html`, and restores `dist/index.html` byte-for-byte.
+
+## Responsive control behavior
+
+Long filenames wrap in Overview. In narrow or short windows, Columns stays inside the viewport and scrolls; Escape closes it and returns focus to Columns. Table sorting retains keyboard focus.
+- Opening any modal prevents background page scrolling.
+- Cell Inspector and Record Relationships dismiss on an outside-backdrop click; inside and keyboard-activated content stays open, and existing native Close/Escape and preview cleanup remain intact.
+- The local-processing badge retains its shared shield/check icon.
