@@ -102,4 +102,60 @@ for (const target of targets) {
     h.menu.open = true; h.events.window.resize(); assert.equal(h.menu.open, false); assert.equal(h.document.activeElement, h.inside);
     assert.match(html, /\n    setupColumnsMenu\(\);/,'menu lifecycle is initialized');
   });
+  function inspectorHarness() {
+    const start = html.indexOf("$('#closeCellDialog').onclick=");
+    const end = html.indexOf("    $('#chooseFile').onclick=", start);
+    assert(start >= 0 && end > start, 'existing inspector bindings exist');
+    const elements = new Map(), revoked = [], state = { cellBlobUrl: 'blob:synthetic-cell' };
+    const rect = { left: 210, right: 970, top: 15.5, bottom: 284.5 };
+    const $ = selector => {
+      if (!elements.has(selector)) {
+        const listeners = {};
+        elements.set(selector, {
+          open: true, closeCalls: 0, listeners,
+          getBoundingClientRect: () => rect,
+          addEventListener(type, handler) { (listeners[type] ||= []).push(handler); },
+          dispatch(type, event) { for (const handler of listeners[type] || []) handler(event); },
+          close() { this.open = false; this.closeCalls++; this.dispatch('close', {}); }
+        });
+      }
+      return elements.get(selector);
+    };
+    vm.runInNewContext(html.slice(start, end), { $, state, URL: { revokeObjectURL: value => revoked.push(value) } });
+    return { $, state, revoked, rect };
+  }
+  for (const name of ['Cell', 'Record']) {
+    const selector = `#${name.toLowerCase()}Dialog`;
+    test(`${target}: ${name} actual backdrop handler closes outside every edge after reopening`, () => {
+      const h = inspectorHarness(), dialog = h.$(selector);
+      for (const [clientX, clientY] of [[209,150],[971,150],[500,14],[500,286]]) {
+        dialog.open = true;
+        const before = dialog.closeCalls;
+        dialog.dispatch('click', { target: dialog, clientX, clientY });
+        assert.equal(dialog.closeCalls, before + 1, 'outside backdrop invokes native close');
+        assert.equal(dialog.open, false);
+      }
+      if (name === 'Cell') {
+        assert.deepEqual(h.revoked, ['blob:synthetic-cell'], 'existing close cleanup retires the preview URL once');
+        assert.equal(h.state.cellBlobUrl, null);
+      } else {
+        assert.deepEqual(h.revoked, [], 'Record dismissal does not own the Cell preview URL');
+      }
+    });
+    test(`${target}: ${name} inside, boundary and child keyboard clicks never dismiss`, () => {
+      const h = inspectorHarness(), dialog = h.$(selector);
+      for (const [clientX, clientY] of [[500,150],[210,15.5],[970,284.5]])
+        dialog.dispatch('click', { target: dialog, clientX, clientY });
+      dialog.dispatch('click', { target: {}, clientX: 0, clientY: 0, detail: 0 });
+      assert.equal(dialog.closeCalls, 0);
+      assert.equal(dialog.open, true);
+      assert.deepEqual(h.revoked, []);
+    });
+    test(`${target}: ${name} existing Close button still invokes native close and scoped cleanup`, () => {
+      const h = inspectorHarness(), dialog = h.$(selector);
+      h.$(`#close${name}Dialog`).onclick();
+      assert.equal(dialog.closeCalls, 1);
+      assert.deepEqual(h.revoked, name === 'Cell' ? ['blob:synthetic-cell'] : []);
+    });
+  }
 }

@@ -6,6 +6,7 @@
 - Bound the Columns menu in narrow/short viewports; close it on Escape, outside click, or resize, restoring summary focus on Escape.
 - Retain keyboard focus on the replacement sort button after table rerender without changing sort order.
 - Lock background scrolling for open modals while preserving existing dialog sizing.
+- Close Cell Inspector and Record Relationships on outside-backdrop clicks while preserving inside and keyboard actions and existing preview cleanup.
 - Add layout, menu lifecycle, sort-focus, and existing shield-badge regressions.
 
 ## 1.1.1 - 2026-10-09

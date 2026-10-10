@@ -78,4 +78,5 @@ Below 820px:
 
 Long filenames wrap in Overview. In narrow or short windows, Columns stays inside the viewport and scrolls; Escape closes it and returns focus to Columns. Table sorting retains keyboard focus.
 - Opening any modal prevents background page scrolling.
+- Cell Inspector and Record Relationships dismiss on an outside-backdrop click; inside and keyboard-activated content stays open, and existing native Close/Escape and preview cleanup remain intact.
 - The local-processing badge retains its shared shield/check icon.
