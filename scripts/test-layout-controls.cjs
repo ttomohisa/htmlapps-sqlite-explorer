@@ -158,4 +158,11 @@ for (const target of targets) {
       assert.deepEqual(h.revoked, name === 'Cell' ? ['blob:synthetic-cell'] : []);
     });
   }
+  test(`${target}: mobile footer hides without removing database navigation`, () => {
+    const mobile = css.slice(css.indexOf('@media(max-width:820px){\n'), css.indexOf('@media(max-width:520px)'));
+    assert.match(mobile, /footer\s*\{\s*display:\s*none;?\s*\}/);
+    assert.match(mobile, /\.mobile-nav\s*\{[^}]*display:\s*grid/);
+    assert.match(mobile, /\.app-main\s*\{[^}]*padding-bottom:92px/);
+  });
+
 }
