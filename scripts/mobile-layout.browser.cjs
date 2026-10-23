@@ -74,7 +74,11 @@ async function main() {
         await page.evaluate(() => window.scrollTo(0, 0));
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
         await checkActions(page, width, height, label);
-        if (file === 'dist/index.html' && [1360,320].includes(width)) await page.screenshot({path:path.join(artifacts, `${language}-${width}.png`)});
+        if (file === 'dist/index.html' && [1360,320].includes(width)) {
+          // Let the existing non-interactive loaded toast clear before evidence captures.
+          await page.waitForFunction(() => getComputedStyle(document.querySelector('#toast')).opacity === '0');
+          await page.screenshot({path:path.join(artifacts, `${language}-${width}.png`)});
+        }
 
         await page.locator(HELP).click();
         const body = page.locator('#helpDialog .dialog-body');
