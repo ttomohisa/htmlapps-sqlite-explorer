@@ -55,6 +55,9 @@ Allow:
 Block all other statements.
 
 ## Mobile UX
+
+- Hide only the informational app footer at the existing 820px mobile breakpoint. Preserve functional navigation/action bars, their safe-area clearance, and the wider-screen footer.
+
 Below 820px:
 - no shrunken desktop sidebar
 - bottom navigation for Overview / Data / Schema / Analyze / SQL

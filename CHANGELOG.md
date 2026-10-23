@@ -23,6 +23,8 @@
 
 ## Unreleased
 
+- Hide the informational footer in the existing phone layout while preserving functional actions and the wider-screen footer.
+
 - Added a cached 100-row pager for SQL results while keeping complete-result CSV/JSON exports.
 - Prevented JSON exports with duplicate column names from silently overwriting values; added bilingual guidance to use unique AS aliases or CSV.
 
