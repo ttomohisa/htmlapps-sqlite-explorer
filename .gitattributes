@@ -2,3 +2,7 @@
 *.ps1 text eol=crlf
 *.bat text eol=crlf
 *.html text eol=lf
+
+components/ui-conventions.js text eol=lf
+
+components/ui-conventions.css text eol=lf

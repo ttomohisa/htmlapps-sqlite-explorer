@@ -66,3 +66,6 @@ try {
 if ($LASTEXITCODE -ne 0) { throw "Layout control regression tests failed." }
 
 Write-Host "[OK] Repository check passed." -ForegroundColor Green
+
+& node (Join-Path $Root "scripts/test-common-ui.cjs")
+if ($LASTEXITCODE -ne 0) { throw "Shared UI pin/native script/gzip checks failed." }

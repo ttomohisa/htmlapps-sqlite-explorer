@@ -34,12 +34,12 @@ function harness(lang = 'en') {
     if (!elements.has(id)) elements.set(id, {
       value: '', innerHTML: '', textContent: '', disabled: true, hidden: false,
       classList: { add() {}, remove() {}, toggle() {} },
-      addEventListener() {}, setAttribute(name, value) { this[name] = value; },
+      dataset:{},focus(){},showModal(){},close(){},removeAttribute(name){delete this[name]},addEventListener() {}, setAttribute(name, value) { this[name] = value; },
     });
     return elements.get(id);
   };
-  const sandbox = { document: { querySelector: $, querySelectorAll: () => [], documentElement: {}, addEventListener() {} },
-    window: { addEventListener() {} }, localStorage: { setItem() {} }, Uint8Array, Intl, performance,
+  const sandbox = { BrowserKittyUI:require('../components/ui-conventions.js'),document: { querySelector: $, querySelectorAll: () => [], documentElement: {}, body:{appendChild(){}},addEventListener() {} },
+    Blob,URL,window: { addEventListener() {} }, localStorage: { setItem() {} }, Uint8Array, Intl, performance,
     console: { error() {} }, setTimeout, clearTimeout };
   vm.createContext(sandbox);
   vm.runInContext(source.slice(start, end) +
@@ -157,7 +157,7 @@ for (const lang of ['en', 'ja']) test(`reset clears previous query, metrics, pla
   assert.equal(h.$('#dropzone').hidden, false);
 });
 
-test('replacement clears old query before file reading finishes', async () => {
+test('replacement retains old query while pending and clears it after successful replacement', async () => {
   const h = harness();
   const closes = seedPreviousQuery(h);
   let release;
@@ -165,8 +165,9 @@ test('replacement clears old query before file reading finishes', async () => {
   h.state.SQL = { Database: function () { this.close = () => {}; } };
   const file = syntheticFile(() => bytes);
   const opened = h.openFile(file);
-  assertNoCachedQuery(h);
-  assert.equal(closes(), 1);
+  assert.equal(h.state.lastQuery.rows[0][0],'fictional-old-value');
+  assert.equal(h.$('#exportQueryCsv').disabled,true);
+  assert.equal(closes(),0);
   release(await syntheticFile().arrayBuffer());
   await opened;
   assertNoCachedQuery(h);
@@ -176,7 +177,7 @@ test('replacement clears old query before file reading finishes', async () => {
 });
 
 for (const failure of ['file read', 'invalid header', 'engine load', 'database open', 'database inspection']) {
-  test(`failed replacement leaves no previous query or exports: ${failure}`, async () => {
+  test(`failed replacement retains previous database and query: ${failure}`, async () => {
     const h = harness();
     const closes = seedPreviousQuery(h);
     h.state.SQL = { Database: function () { this.close = () => {}; } };
@@ -187,14 +188,13 @@ for (const failure of ['file read', 'invalid header', 'engine load', 'database o
     if (failure === 'database open') h.state.SQL.Database = function () { throw new Error('Invalid fictional database'); };
     if (failure === 'database inspection') h.sandbox.inspectDatabase = async () => { throw new Error('Inspection failed'); };
     await h.openFile(file);
-    assertNoCachedQuery(h);
-    assert.equal(closes(), 1);
-    assert.equal(h.state.db, null);
-    assert.equal(h.state.file, null);
-    assert.equal(h.$('#workspace').hidden, true);
-    assert.equal(h.$('#dropzone').hidden, false);
-    assert.equal(h.$('#loadingOverlay').hidden, true);
-    assert.equal(h.notices.length, 1);
+    assert.equal(h.state.lastQuery.rows[0][0],'fictional-old-value');
+    assert.equal(closes(),0);
+    assert.equal(h.state.file.name,'previous.sqlite');
+    assert.equal(h.$('#exportQueryCsv').disabled,false);
+    assert.equal(h.$('#loadingOverlay').hidden,true);
+    assert.match(h.$('#uiError').textContent,/Processing failed/);
+
   });
 }
 
@@ -443,3 +443,10 @@ test('large result range uses exact total counts rather than compact rounded not
   runSyntheticQuery(h, 100001);
   assert.equal(h.$('#queryPageInfo').textContent, '1–100 / 100,001');
 });
+
+test('replacement refuses double submit and late bytes cannot revive reset database',async()=>{const h=harness();seedPreviousQuery(h);let finish;const first=h.openFile(syntheticFile(()=>new Promise(r=>finish=r)));await Promise.resolve();await h.openFile(syntheticFile());assert.equal(h.state.file.name,'previous.sqlite');h.resetFile();finish(await syntheticFile().arrayBuffer());await first;assert.equal(h.state.db,null);assert.equal(h.state.file,null);assert.equal(h.$('#chooseFile').disabled,false)});
+test('source-owned removal cannot delete newer database and valid removal focuses chooser',()=>{const h=harness();seedPreviousQuery(h);h.sandbox.requestRemove();h.resetFile();seedPreviousQuery(h);h.$('#removeConfirm').onclick();assert.equal(h.state.file.name,'previous.sqlite');h.sandbox.requestRemove();h.$('#removeConfirm').onclick();assert.equal(h.state.db,null)});
+test('language storage failure preserves editor, filename and previous-result notice',()=>{const h=harness();h.$('#queryEditor').value='SELECT 1';h.$('#exportName').value='edited';h.state.lastQuery={columns:['v'],rows:[[1]]};h.sandbox.renderUi();assert.match(h.$('#queryRevision').textContent,/Previous/);h.$('#languageButton').onclick();assert.equal(h.$('#queryEditor').value,'SELECT 1');assert.equal(h.$('#exportName').value,'edited');assert.match(h.$('#languageNotice').textContent,/言語/)});
+test('anchor throw cleans up, preserves output data and persistent recovery',()=>{const h=harness();let anchor;h.sandbox.document.createElement=()=>anchor={click(){throw Error('delivery failed')},remove(){this.removed=true}};vm.runInContext('download=('+source.slice(source.indexOf('function download('),source.indexOf('    function exportRows')).trim()+')',h.sandbox);const data={columns:['v'],rows:[[1]]};h.$('#exportName').value='edited-name';h.exportRows('old','csv',data);assert.equal(anchor.download,'edited-name.csv');assert.equal(anchor.hidden,true);assert.equal(anchor.removed,true);assert.match(h.$('#uiError').textContent,/delivery failed/);assert.equal(data.rows[0][0],1)});
+
+test('pinned SQLite engine runs real read-only SQL and exports all cached rows',async()=>{const SQL=await require('../.cache/sql.js-1.14.1/extracted/package/dist/sql-asm.js')();const fixture=new SQL.Database();fixture.run('CREATE TABLE items(id INTEGER, name TEXT)');for(let i=0;i<205;i++)fixture.run('INSERT INTO items VALUES (?,?)',[i,'猫'+i]);const bytes=fixture.export();fixture.close();const h=harness();h.state.SQL=SQL;await h.openFile({name:'fixture.sqlite',size:bytes.length,arrayBuffer:async()=>bytes.buffer});h.$('#queryEditor').value='SELECT id,name FROM items ORDER BY id';h.runSql();assert.equal(h.state.lastQuery.rows.length,205);h.$('#queryNextPage').onclick();h.$('#exportQueryCsv').onclick();assert.match(h.downloads.at(-1).text,/204,猫204/);assert.equal(cellValues(h.$('#queryResults').innerHTML).length,200);h.$('#queryEditor').value='DELETE FROM items';h.runSql();assert.equal(h.state.db.exec('SELECT COUNT(*) FROM items')[0].values[0][0],205);h.resetFile()});
