@@ -150,11 +150,15 @@ async function main() {
         assert.equal((await page.locator('[data-i18n="localBadge"]').textContent()).trim(), language === 'en' ? 'Fully local processing' : '完全ローカル処理', label + ': privacy wording');
         assert.equal(await page.locator('body > footer').isVisible(), !isPhone(width, height), label + ': informational footer breakpoint');
         const badge = page.locator('.local-badge');
-        assert.equal(await badge.isVisible(), true, label + ': preserve existing badge visibility');
+        assert.equal(await badge.isVisible(), !isPhone(width, height), label + ': local-processing badge visibility');
         if (await badge.isVisible()) {
           const box = await badge.boundingBox(), text = await page.locator('[data-i18n="localBadge"]').boundingBox();
           assert.ok(box && text && box.x >= 0 && box.x + box.width <= width + 1 && text.x >= box.x && text.x + text.width <= box.x + box.width + 1, label + ': local-processing badge fits');
         }
+        const titleSize = await page.locator('#brandName').evaluate(el => getComputedStyle(el).fontSize);
+        await page.locator(LANGUAGE).click();
+        assert.equal(await page.locator('#brandName').evaluate(el => getComputedStyle(el).fontSize), titleSize, label + ': brand font size across languages');
+        await page.locator(LANGUAGE).click();
         await exerciseActions(page, width, height, label);
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label + ': page width');
         // Responsive changes must not leave the informational footer in a stale state.
