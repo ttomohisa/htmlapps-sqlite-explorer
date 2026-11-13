@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.3 - 2026-11-13
+
+- Fixed stale table rows after replacing a database and mismatched CSV exports after changing the analysis selection.
+- Preserved all SQLite integer digits in the UI, CSV and JSON. Large integers are exported as decimal strings in JSON.
+- Warned when opening a WAL-mode database about changes stored in its separate WAL file.
+- Tightened read-only SQL and fixed false positives for quoted identifiers.
+- Fixed view pagination and filtering, generated-column visibility, SQLite-prefixed user table names, and implicit foreign-key targets.
+
 ## v1.1.2 - 2026-10-10
 
 - Wrap long Overview filenames and allow narrow grid/table-scale columns to shrink without page overflow.

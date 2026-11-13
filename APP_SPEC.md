@@ -1,7 +1,7 @@
 # APP_SPEC.md
 
 ## Product
-SQLite Explorer v1.1.2
+SQLite Explorer v1.1.3
 
 ## Goal
 A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite database and quickly understand its structure and data without uploading it.
@@ -13,7 +13,7 @@ A privacy-friendly single-HTML app that lets a user open an unfamiliar SQLite da
 - Must work from `file://` and static hosting.
 - Japanese and English live in the same HTML.
 - No dark mode.
-- v1.1.2 is read-only and never writes back to the source database.
+- v1.1.3 is read-only and never writes back to the source database.
 - Third-party dependencies are pinned and embedded by the build.
 - The self-extract loader is ASCII-only, inherits the embedded favicon from `dist/index.html`, and restores the standalone HTML byte-for-byte.
 
@@ -71,7 +71,9 @@ Below 820px:
 - Opening a valid SQLite file populates Overview.
 - Table data pages without loading the entire table into DOM.
 - Relationship inference does not replace declared FK data.
-- Write SQL is rejected before execution.
+- Write SQL is rejected before execution. The SQLite connection also enables `query_only`.
+- Wide SQLite integers retain all digits in the UI and CSV. JSON represents integers outside the safe JavaScript range as decimal strings.
+- Databases marked as WAL mode display a persistent warning that uncheckpointed changes are outside the loaded main file.
 - SQL result pages render at most 100 cached rows without rerunning queries. New queries, errors, reset, and file replacement clear the previous page state.
 - Duplicate result column names disable JSON export with an EN/JA explanation and a download-handler guard. CSV remains positional; distinct-name JSON keeps its object-array format.
 - Language switch updates visible navigation/help text.
