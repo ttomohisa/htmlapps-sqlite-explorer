@@ -43,7 +43,7 @@ function harness(lang = 'en') {
     console: { error() {} }, setTimeout, clearTimeout };
   vm.createContext(sandbox);
   vm.runInContext(source.slice(start, end) +
-    '\nglobalThis.api = { state, tableHtml, exportRows, resetFile, openFile, runSql, tr, applyLanguage };', sandbox);
+    '\nglobalThis.api = { state, tableHtml, exportRows, resetFile, openFile, runSql, tr, applyLanguage, isReadOnly, renderTableData, inspectDatabase, buildExplicitRelations };', sandbox);
   const bindingsEnd = source.indexOf("    $('#brandName').textContent=", end);
   assert.ok(bindingsEnd > end, 'Event-binding boundary must exist');
   vm.runInContext(source.slice(end, bindingsEnd), sandbox);
@@ -162,7 +162,7 @@ test('replacement clears old query before file reading finishes', async () => {
   const closes = seedPreviousQuery(h);
   let release;
   const bytes = new Promise(resolve => { release = resolve; });
-  h.state.SQL = { Database: function () { this.close = () => {}; } };
+  h.state.SQL = { Database: function () { this.close = () => {}; this.run = () => {}; } };
   const file = syntheticFile(() => bytes);
   const opened = h.openFile(file);
   assertNoCachedQuery(h);
@@ -179,7 +179,7 @@ for (const failure of ['file read', 'invalid header', 'engine load', 'database o
   test(`failed replacement leaves no previous query or exports: ${failure}`, async () => {
     const h = harness();
     const closes = seedPreviousQuery(h);
-    h.state.SQL = { Database: function () { this.close = () => {}; } };
+    h.state.SQL = { Database: function () { this.close = () => {}; this.run = () => {}; } };
     let file = syntheticFile();
     if (failure === 'file read') file = syntheticFile(async () => { throw new Error('File read failed'); });
     if (failure === 'invalid header') file = syntheticFile(async () => new Uint8Array(0).buffer);
@@ -442,4 +442,148 @@ test('large result range uses exact total counts rather than compact rounded not
   const h = harness();
   runSyntheticQuery(h, 100001);
   assert.equal(h.$('#queryPageInfo').textContent, '1–100 / 100,001');
+});
+
+test('read-only SQL validates tokens and the arguments of read-only PRAGMAs', () => {
+  const { isReadOnly } = harness();
+  for (const sql of [
+    'SELECT 1 AS [update];',
+    "SELECT 'a--b' AS x, 'a;/*' AS y;",
+    'WITH c AS (SELECT 1) SELECT * FROM c',
+    'WITH replace(id) AS (SELECT 42), c AS (SELECT id FROM replace) SELECT * FROM c',
+    'EXPLAIN QUERY PLAN SELECT 1',
+    'PRAGMA main.table_xinfo("select;");',
+    'PRAGMA user_version;',
+    'PRAGMA quick_check(1);',
+    'PRAGMA quick_check(-1);',
+  ]) assert.equal(isReadOnly(sql), true, sql);
+  for (const sql of [
+    'PRAGMA user_version(123);',
+    'PRAGMA schema_version = 123;',
+    'PRAGMA page_size(1024);',
+    'WITH c AS (SELECT 1) DELETE FROM t',
+    'EXPLAIN PRAGMA query_only(0);',
+    'SELECT 1; SELECT 2;',
+    'SELECT 1; PRAGMA user_version(123);',
+  ]) assert.equal(isReadOnly(sql), false, sql);
+});
+
+test('reset clears table display, cached cells and export controls', () => {
+  const h = harness();
+  h.state.currentTableData = { columns: ['id'], rows: [[1]] };
+  h.$('#dataContainer').innerHTML = 'old table rows';
+  h.$('#dataTitle').textContent = 'old table name';
+  h.$('#exportTableCsv').disabled = false;
+  h.resetFile();
+  assert.equal(h.state.currentTableData, null);
+  assert.doesNotMatch(h.$('#dataContainer').innerHTML, /old table rows/);
+  assert.doesNotMatch(h.$('#dataTitle').textContent, /old table name/);
+  assert.equal(h.$('#exportTableCsv').disabled, true);
+});
+
+test('analysis selection does not replace the active data table', () => {
+  const h = harness();
+  h.state.selectedTable = 'data_table';
+  h.sandbox.profileTable = () => {};
+  h.sandbox.renderNavigation = () => {};
+  h.$('#analyzeTableSelect').onchange({ target: { value: 'profiled_table' } });
+  assert.equal(h.state.selectedTable, 'data_table');
+});
+
+async function loadEmbeddedSQLite() {
+  const artifact = fs.readFileSync(path.join(__dirname, '../sqlite-explorer.html'), 'utf8');
+  const bundle = JSON.parse(artifact.match(/const assetBundle=(.+);/)[1]);
+  const compressed = Buffer.from(bundle.dependencies.sqljs.assets.asm.base64, 'base64');
+  const engine = { module: { exports: {} }, exports: {}, require, __dirname, __filename, process, TextDecoder, TextEncoder, Uint8Array, console, setTimeout, clearTimeout, performance };
+  vm.runInNewContext(require('node:zlib').gunzipSync(compressed).toString(), engine);
+  return engine.module.exports();
+}
+
+const embeddedSQLite = loadEmbeddedSQLite();
+
+test('embedded SQLite preserves wide integers in display and both exports', async () => {
+  const SQL = await embeddedSQLite;
+  const h = harness();
+  const db = new SQL.Database();
+  try {
+    h.state.db = db;
+    h.$('#queryEditor').value = 'SELECT 9007199254740993 AS id, 7 AS small';
+    h.runSql();
+    assert.match(h.$('#queryResults').innerHTML, /9007199254740993/);
+    h.exportRows('result', 'csv', h.state.lastQuery);
+    h.exportRows('result', 'json', h.state.lastQuery);
+    assert.equal(h.downloads[0].text, '\uFEFFid,small\r\n9007199254740993,7');
+    assert.deepEqual(JSON.parse(h.downloads[1].text), [{ id: '9007199254740993', small: 7 }]);
+  } finally {
+    db.close();
+  }
+});
+
+test('embedded SQLite discovers generated columns and valid sqlite-prefixed names', async () => {
+  const SQL = await embeddedSQLite;
+  const h = harness();
+  h.state.db = new SQL.Database();
+  try {
+    h.state.db.run("CREATE TABLE sqliteX(x, y AS (x+1)); INSERT INTO sqliteX(x) VALUES (4);");
+    for (const name of ['renderNavigation', 'renderOverview', 'renderDDL', 'renderRelations', 'populateErdFocus', 'renderERD', 'populateAnalyzeSelect', 'buildHealth']) {
+      h.sandbox[name] = () => {};
+    }
+    // Use SQLite, including its PRAGMAs, for schema inspection.
+    vm.runInContext('globalThis.objectRows = (sql, params = []) => { const result = execRows(sql, params); return result.rows.map(row => Object.fromEntries(result.columns.map((column, i) => [column, row[i]]))); };', h.sandbox);
+    await h.inspectDatabase();
+    assert.equal(h.state.tables[0].name, 'sqliteX');
+    assert.equal(h.state.tableMeta.get('sqliteX').info.map(column => column.name).join(','), 'x,y');
+  } finally {
+    h.state.db.close();
+  }
+});
+
+test('a view can page and filter rows past its initial 100 rows', async () => {
+  const SQL = await embeddedSQLite;
+  const h = harness();
+  const db = new SQL.Database();
+  try {
+    db.run('CREATE VIEW items AS WITH RECURSIVE nums(n) AS (VALUES(1) UNION ALL SELECT n+1 FROM nums WHERE n<205) SELECT n FROM nums');
+    h.state.db = db;
+    h.state.selectedTable = 'items';
+    h.state.tableMeta.set('items', { info: [{ name: 'n' }] });
+    await h.renderTableData(true);
+    assert.equal(h.$('#pagination').hidden, false);
+    assert.equal(h.$('#nextPage').disabled, false);
+    h.state.page = 2;
+    await h.renderTableData();
+    assert.equal(h.state.currentTableData.rows.length, 5);
+    assert.equal(h.state.currentTableData.rows[4][0], 205);
+    h.state.rowFilter = '205';
+    h.state.page = 0;
+    await h.renderTableData();
+    assert.equal(h.state.currentTableData.rows.length, 1);
+    assert.equal(h.state.currentTableData.rows[0][0], 205);
+  } finally {
+    db.close();
+  }
+});
+
+test('implicit composite foreign keys map columns in primary-key order', () => {
+  const h = harness();
+  h.state.tables = [{ name: 'parent' }, { name: 'child' }];
+  h.state.tableMeta.set('parent', { info: [{ name: 'a', pk: 2 }, { name: 'b', pk: 1 }], fks: [] });
+  h.state.tableMeta.set('child', { info: [], fks: [
+    { id: 0, seq: 1, table: 'Parent', from: 'y', to: null },
+    { id: 0, seq: 0, table: 'Parent', from: 'x', to: null },
+  ] });
+  h.buildExplicitRelations();
+  assert.equal(h.state.explicitRelations.map(r => `${r.fromColumn}:${r.toTable}.${r.toColumn}`).join(','), 'x:parent.b,y:parent.a');
+});
+
+test('WAL-mode notice is shown only for the current file', async () => {
+  const h = harness();
+  h.state.SQL = { Database: function () { this.close = () => {}; this.run = () => {}; } };
+  const header = new Uint8Array(100);
+  header.set(new Uint8Array(await syntheticFile().arrayBuffer()));
+  header[18] = header[19] = 2;
+  await h.openFile(syntheticFile(async () => header.buffer));
+  assert.equal(h.$('#walNotice').hidden, false);
+  await h.openFile(syntheticFile());
+  assert.equal(h.$('#walNotice').hidden, true);
 });

@@ -31,6 +31,99 @@ async function exerciseActions(page, width, height, label) {
   await checkActions(page, width, height, label);
 }
 
+async function checkDataRegressions(browser) {
+  const { DatabaseSync } = require('node:sqlite');
+  const dir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'sqlite-explorer-'));
+  const writeDatabase = (name, sql) => {
+    const file = path.join(dir, name);
+    const db = new DatabaseSync(file);
+    try { db.exec(sql); } finally { db.close(); }
+    return file;
+  };
+  const first = writeDatabase('first.sqlite', `
+    CREATE TABLE alpha(id INTEGER PRIMARY KEY, label TEXT, generated AS (label || '-generated'));
+    INSERT INTO alpha VALUES(9007199254740992,'first'),(9007199254740993,'second');
+    CREATE TABLE beta(label TEXT);
+    INSERT INTO beta VALUES('beta-only');
+    CREATE TABLE sqliteX(x);
+    CREATE TABLE parent(a,b,PRIMARY KEY(a,b)) WITHOUT ROWID;
+    CREATE TABLE child(a,b,FOREIGN KEY(a,b) REFERENCES parent);
+    INSERT INTO parent VALUES(1,1),(1,2);
+    INSERT INTO child VALUES(1,2);
+    CREATE VIEW wide_view AS WITH RECURSIVE seq(n) AS
+      (VALUES(1) UNION ALL SELECT n+1 FROM seq WHERE n<205) SELECT n FROM seq;
+  `);
+  const second = writeDatabase('second.sqlite', 'CREATE TABLE gamma(label TEXT)');
+  const wal = fs.readFileSync(second);
+  wal[18] = wal[19] = 2; // WAL format marker in an already checkpointed main database.
+  const context = await browser.newContext({viewport:{width:393,height:740}, locale:'en'});
+  const page = await context.newPage();
+  const at = selector => page.locator(selector);
+  const go = view => at(`#mobileNav [data-view="${view}"]`).click();
+  const load = async file => {
+    await at('#fileInput').setInputFiles(file);
+    await at('#workspace').waitFor();
+  };
+  const run = async sql => {
+    await at('#queryEditor').fill(sql);
+    await at('#runQuery').click();
+    return at('#queryResults').innerText();
+  };
+  const download = async selector => {
+    const pending = page.waitForEvent('download');
+    await at(selector).click();
+    return fs.readFileSync(await (await pending).path(), 'utf8').replace(/^\uFEFF/, '');
+  };
+  try {
+    await page.goto(pathToFileURL(path.resolve('dist/index.html')).href);
+    await load(first);
+    assert.equal(await at('#walNotice').isVisible(), false);
+    await go('tables');
+    assert.equal(await at('#dataToolbar').isVisible(), false);
+    await at('#dataTableSelect').selectOption('sqliteX');
+    await at('#dataTableSelect').selectOption('alpha');
+    assert.match(await at('#dataContainer').innerText(), /second-generated/);
+    await go('analyze');
+    await at('#analyzeTableSelect').selectOption('beta');
+    await go('tables');
+    assert.equal(await at('#dataTitle').innerText(), 'alpha');
+    assert.match(await download('#exportTableCsv'), /9007199254740993,second,second-generated/);
+    await at('#dataTableSelect').selectOption('wide_view');
+    await at('#nextPage').click();
+    assert.match(await at('#pageInfo').innerText(), /101–200/);
+    await at('#rowFilterInput').fill('205');
+    await page.waitForFunction(() => document.querySelector('#dataContainer tbody')?.innerText.trim() === '205');
+    await at('#dataTableSelect').selectOption('child');
+    await at('[data-record-row]').first().click();
+    assert.equal(await at('#recordDialog [data-related-index]').count(), 1);
+    await at('#recordDialog [data-related-index]').click();
+    assert.equal(await at('#dataTitle').innerText(), 'parent');
+    assert.equal(await at('#dataContainer tbody tr').count(), 1);
+    assert.deepEqual(await at('#dataContainer tbody .cell-button').allTextContents(), ['1', '2']);
+    await go('query');
+    assert.match(await run('PRAGMA user_version(123)'), /blocked/i);
+    assert.match(await run('PRAGMA user_version'), /\b0\b/);
+    assert.match(await run('SELECT 9007199254740993 AS [update]'), /9007199254740993/);
+    assert.deepEqual(JSON.parse(await download('#exportQueryJson')), [{update:'9007199254740993'}]);
+    await at('#replaceFileMobile').click();
+    await load(second);
+    await go('tables');
+    assert.equal(await at('#dataContainer tbody tr').count(), 0);
+    assert.equal(await at('#exportTableCsv').isEnabled(), false);
+    await at('#replaceFileMobile').click();
+    await load({name:'wal.sqlite', mimeType:'application/x-sqlite3', buffer:wal});
+    await go('query');
+    assert.match(await at('#walNotice').innerText(), /WAL mode/);
+    await at('#languageButton').click();
+    assert.match(await at('#walNotice').innerText(), /WALモード/);
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    console.log('PASS SQLite data and SQL regressions at mobile width');
+  } finally {
+    await context.close();
+    fs.rmSync(dir, { recursive:true, force:true });
+  }
+}
+
 async function main() {
   fs.mkdirSync(artifacts, {recursive:true});
   const browser = await chromium.launch();
@@ -107,6 +200,7 @@ async function main() {
         throw new Error(label + ': ' + error.message, {cause:error});
       } finally { await context.close(); }
     }
+    await checkDataRegressions(browser);
   } finally { await browser.close(); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

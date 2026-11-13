@@ -43,7 +43,8 @@
     .schema-tabs{display:flex;gap:4px;margin-bottom:10px;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface-muted);width:max-content;max-width:100%;overflow:auto}.schema-tab{border:0;border-radius:8px;background:transparent;padding:7px 11px;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}.schema-tab.active{background:var(--surface);box-shadow:var(--shadow-sm)}.schema-panel{display:none}.schema-panel.active{display:block}.schema-sql{margin:0;padding:14px;border-radius:11px;background:#202522;color:#eaf2ed;overflow:auto;font:12px/1.65 var(--mono);white-space:pre-wrap}.erd-wrap{height:620px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:radial-gradient(circle at 1px 1px,#dcded8 1px,transparent 1px);background-size:20px 20px}.erd-svg{display:block;min-width:100%;min-height:100%}.erd-node rect{fill:#fff;stroke:#cfd1ca;stroke-width:1}.erd-node .head{fill:#eef5f1}.erd-node text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#20211f;font-size:11px}.erd-node .name{font-weight:700}.erd-edge{fill:none;stroke:#70817a;stroke-width:1.5}.erd-edge.inferred{stroke:#8a6b25;stroke-dasharray:6 5}.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:10px}.legend-line{display:inline-block;width:28px;border-top:2px solid #70817a;vertical-align:3px}.legend-line.inferred{border-top-color:#8a6b25;border-top-style:dashed}
     .relation-list{display:grid;gap:8px}.relation-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:10px 11px;border:1px solid var(--line);border-radius:10px}.relation-col{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--mono);font-size:11px}.relation-arrow{color:var(--muted)}.confidence{padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:800}.confidence.inferred{background:var(--warning-soft);color:var(--warning)}
     .profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.profile-card{padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.profile-name{font-family:var(--mono);font-size:12px;font-weight:800}.type-pill{padding:2px 6px;border-radius:999px;background:var(--surface-muted);color:var(--muted);font:9px var(--mono)}.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.mini-stat{padding:7px;border-radius:8px;background:var(--surface-muted)}.mini-stat strong{display:block;font-size:12px}.mini-stat span{color:var(--muted);font-size:9px}.top-values{display:flex;flex-wrap:wrap;gap:5px}.value-pill{max-width:180px;padding:3px 6px;border:1px solid var(--line);border-radius:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:9px var(--mono)}
-    #queryPagination[hidden]{display:none}.query-notice{margin:8px 0;color:var(--muted);font-size:11px;line-height:1.5}
+    #walNotice{margin:0 0 12px;padding:9px 12px;border:1px solid var(--line);border-left:3px solid #a66c19;border-radius:8px;background:var(--surface);color:var(--text);font-size:12px}
+    .data-toolbar[hidden],#pagination[hidden]{display:none}#queryPagination[hidden]{display:none}.query-notice{margin:8px 0;color:var(--muted);font-size:11px;line-height:1.5}
     .query-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:12px}.query-editor{width:100%;min-height:230px;resize:vertical;padding:14px;border:1px solid var(--line);border-radius:11px;background:#202522;color:#edf5f0;font:12px/1.7 var(--mono);tab-size:2}.query-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.read-only-badge{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:10px;font-weight:800}.query-meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:10px}.plan-list{display:grid;gap:7px}.plan-item{padding:9px 10px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--surface-muted);font:10px/1.5 var(--mono)}.empty-state{padding:36px 18px;text-align:center;color:var(--muted)}.empty-state strong{display:block;color:var(--text);font-size:14px}.empty-state p{margin:5px auto 0;max-width:480px;font-size:11px}.error-box{padding:11px 12px;border:1px solid color-mix(in srgb,var(--danger) 35%,var(--line));border-radius:10px;background:#fff0ef;color:var(--danger);font:11px/1.55 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
 
     .global-search-card{margin-bottom:12px;padding:14px}.search-bar{display:flex;gap:8px;align-items:center}.search-input{flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfbf9}.search-hint{margin:7px 2px 0;color:var(--muted);font-size:10px}.search-results{display:grid;gap:8px;margin-top:12px}.search-group{border:1px solid var(--line);border-radius:11px;overflow:hidden}.search-group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;background:var(--surface-muted);font-size:11px}.search-group-head strong{font-family:var(--mono)}.search-hit{width:100%;display:grid;grid-template-columns:minmax(130px,.45fr) minmax(0,1fr);gap:10px;padding:9px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);text-align:left;cursor:pointer}.search-hit:hover{background:#fafbf9}.search-hit-col{font:10px var(--mono);color:var(--accent)}.search-hit-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:10px var(--mono)}
@@ -146,6 +147,7 @@
       </aside>
 
       <div class="content">
+          <p class="query-notice" id="walNotice" role="status" data-i18n="walNotice" hidden></p>
         <section class="view active" id="view-overview">
           <div class="view-head"><div><h2 data-i18n="overviewTitle">Database Overview</h2><p id="overviewSubtitle"></p></div><div class="view-actions"><button class="button small" id="runQuickCheck" type="button" data-i18n="quickCheck">Quick check</button></div></div>
           <div class="metric-grid">
@@ -175,7 +177,7 @@
         </section>
 
         <section class="view" id="view-tables">
-          <div class="view-head"><div><h2 id="dataTitle">Table</h2><p id="dataSubtitle"></p></div><div class="view-actions"><select id="dataTableSelect" class="button small" aria-label="Select table"></select><button class="button small" id="exportTableCsv" type="button">CSV</button><button class="button small" id="exportTableJson" type="button">JSON</button></div></div>
+          <div class="view-head"><div><h2 id="dataTitle">データ</h2><p id="dataSubtitle"></p></div><div class="view-actions"><select id="dataTableSelect" class="button small" data-i18n-aria-label="selectObject" aria-label="Select a table or view"></select><button class="button small" id="exportTableCsv" type="button" disabled>CSV</button><button class="button small" id="exportTableJson" type="button" disabled>JSON</button></div></div>
           <div class="data-toolbar" id="dataToolbar" hidden>
             <input class="search-input" id="rowFilterInput" type="search" data-i18n-placeholder="filterRows" placeholder="このテーブルの行を検索">
             <button class="button small" id="clearRowFilter" type="button" data-i18n="clear">クリア</button>
@@ -183,7 +185,7 @@
             <button class="button small" id="resetSort" type="button" data-i18n="resetSort">並び替え解除</button>
             <span class="toolbar-meta" id="filterMeta"></span>
           </div>
-          <div id="dataContainer"><div class="empty-state"><strong data-i18n="selectTableTitle">テーブルを選択してください</strong><p data-i18n="selectTableBody">左側の一覧からテーブルを選ぶと、データをページ単位で表示します。</p></div></div>
+          <div id="dataContainer"><div class="empty-state"><strong data-i18n="selectTableTitle">テーブルを選択してください</strong><p data-i18n="selectTableBody">テーブルまたはビューを選ぶと、データをページ単位で表示します。</p></div></div>
           <div class="pagination" id="pagination" hidden><span id="pageInfo"></span><div class="pager-buttons"><button class="button small" id="prevPage" type="button" data-i18n="previous">前へ</button><button class="button small" id="nextPage" type="button" data-i18n="next">次へ</button></div></div>
         </section>
 
@@ -322,8 +324,11 @@ ORDER BY type, name;</textarea>
     Object.assign(T.ja,{queryExportAll:'100行ずつ表示します。書き出しには結果の全行が含まれます。',duplicateQueryColumns:'列名が重複しているためJSONを書き出せません。ASで一意の列名を付けるか、CSVを使用してください。'});
     Object.assign(T.en,{queryExportAll:'Showing 100 rows per page. Exports include all result rows.',duplicateQueryColumns:'JSON export is unavailable because of duplicate column names. Use unique AS aliases or export CSV.'});
 
+    Object.assign(T.ja,{dataTitle:'データ',unresolvedKey:'参照列不明',selectObject:'テーブルまたはビューを選択',walNotice:'このDBはWALモードです。別のWALファイルに残っている変更は表示されません。全件を確認するには、元のアプリで作成したバックアップを開いてください。'});
+    Object.assign(T.en,{dataTitle:'Data',unresolvedKey:'Unknown referenced column',selectObject:'Choose a table or view',walNotice:'This database uses WAL mode. Changes still in a separate WAL file are missing here. Open a backup made by the source app to see all committed data.'});
+
     const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
-    const state={lang:'ja',SQL:null,db:null,file:null,tables:[],views:[],indexes:[],triggers:[],tableMeta:new Map(),rowCounts:new Map(),explicitRelations:[],inferredRelations:[],selectedTable:null,page:0,pageSize:100,lastQuery:null,queryPage:0,queryPageSize:100,currentView:'overview',rowFilter:'',sortColumn:'',sortDir:'',visibleColumns:new Set(),currentTableData:null,currentTableIsView:false,globalSearchHits:[],health:null,cellBlobUrl:null};
+    const state={lang:'ja',SQL:null,db:null,file:null,tables:[],views:[],indexes:[],triggers:[],tableMeta:new Map(),rowCounts:new Map(),explicitRelations:[],inferredRelations:[],selectedTable:null,relatedFilter:null,profileRequest:0,searchRequest:0,page:0,pageSize:100,lastQuery:null,queryPage:0,queryPageSize:100,currentView:'overview',rowFilter:'',sortColumn:'',sortDir:'',visibleColumns:new Set(),currentTableData:null,currentTableIsView:false,globalSearchHits:[],health:null,cellBlobUrl:null};
     const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const qi=s=>`"${String(s).replace(/"/g,'""')}"`;
     const fmt=n=>Number.isFinite(Number(n))?new Intl.NumberFormat(state.lang==='ja'?'ja-JP':'en-US',{notation:Number(n)>=100000?'compact':'standard',maximumFractionDigits:1}).format(Number(n)):'—';
@@ -332,33 +337,49 @@ ORDER BY type, name;</textarea>
     function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2400)}
     function loading(show,title='',text=''){const el=$('#loadingOverlay');el.hidden=!show;if(show){$('#loadingTitle').textContent=title;$('#loadingText').textContent=text}}
     function nextFrame(){return new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)))}
-    function applyLanguage(lang){state.lang=lang;document.documentElement.lang=lang;localStorage.setItem('sqliteExplorer.lang',lang);$('#languageButton').textContent=lang==='ja'?'EN':'JA';$$('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k]});$$('[data-i18n-title]').forEach(el=>{const v=tr(el.dataset.i18nTitle);el.title=v});$$('[data-i18n-aria-label]').forEach(el=>el.setAttribute('aria-label',tr(el.dataset.i18nAriaLabel)));$$('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));if(state.lastQuery)renderQueryResults();if(state.db){renderOverview();renderRelations();renderHealth();populateErdFocus();if(state.selectedTable)renderTableData();if(state.globalSearchHits.length)renderGlobalSearchResults();if(state.currentView==='analyze')profileTable($('#analyzeTableSelect').value)}}
-    function resultRows(result){if(!result?.length)return{columns:[],rows:[]};return{columns:result[0].columns,rows:result[0].values}}
-    function execRows(sql,params=[]){const stmt=state.db.prepare(sql);try{if(params.length)stmt.bind(params);const rows=[];const columns=stmt.getColumnNames();while(stmt.step())rows.push(stmt.get());return{columns,rows}}finally{stmt.free()}}
+    function applyLanguage(lang){state.lang=lang;document.documentElement.lang=lang;localStorage.setItem('sqliteExplorer.lang',lang);$('#languageButton').textContent=lang==='ja'?'EN':'JA';$$('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k]});$$('[data-i18n-title]').forEach(el=>{const v=tr(el.dataset.i18nTitle);el.title=v});$$('[data-i18n-aria-label]').forEach(el=>el.setAttribute('aria-label',tr(el.dataset.i18nAriaLabel)));$$('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));if(state.lastQuery)renderQueryResults();if(!state.selectedTable)$('#dataTitle').textContent=tr('dataTitle');if(state.db){renderOverview();renderRelations();renderHealth();populateErdFocus();renderNavigation();if(state.selectedTable)renderTableData();if(state.globalSearchHits.length)renderGlobalSearchResults();if(state.currentView==='analyze')profileTable($('#analyzeTableSelect').value)}}
+    const integerOptions={useBigInt:true};
+    function preserveInteger(value){
+      if(typeof value!=='bigint')return value;
+      const number=Number(value);
+      return Number.isSafeInteger(number)?number:value;
+    }
+    function resultRows(result){if(!result?.length)return{columns:[],rows:[]};const {columns,values:rows}=result[0];for(const row of rows){for(let i=0;i<row.length;i++)row[i]=preserveInteger(row[i])}return{columns,rows}}
+    function execRows(sql,params=[]){const stmt=state.db.prepare(sql);try{if(params.length)stmt.bind(params);const rows=[];const columns=stmt.getColumnNames();while(stmt.step())rows.push(stmt.get(null,integerOptions).map(preserveInteger));return{columns,rows}}finally{stmt.free()}}
     function scalar(sql,params=[]){const r=execRows(sql,params);return r.rows[0]?.[0]??null}
     function objectRows(sql,params=[]){const r=execRows(sql,params);return r.rows.map(row=>Object.fromEntries(r.columns.map((c,i)=>[c,row[i]])))}
     function validSqliteHeader(bytesArr){const sig='SQLite format 3\u0000';if(bytesArr.length<16)return false;for(let i=0;i<sig.length;i++)if(bytesArr[i]!==sig.charCodeAt(i))return false;return true}
-    async function ensureSql(){if(state.SQL)return state.SQL;loading(true,tr('loadingSql'));await nextFrame();try{if(!window.initSqlJs){if(!StandaloneAssets.has('sqljs','asm'))throw new Error('Embedded sql.js asset is missing. Rebuild the standalone HTML.');await StandaloneAssets.loadClassicScript('sqljs','asm','initSqlJs')}state.SQL=await window.initSqlJs();return state.SQL}finally{loading(false)}}
+    async function ensureSql(){if(state.SQL)return state.SQL;loading(true,tr('loadingSql'));await nextFrame();if(!window.initSqlJs){if(!StandaloneAssets.has('sqljs','asm'))throw new Error('Embedded sql.js asset is missing. Rebuild the standalone HTML.');await StandaloneAssets.loadClassicScript('sqljs','asm','initSqlJs')}state.SQL=await window.initSqlJs();return state.SQL}
     async function openFile(file){
+      if(state.openingFile)return;
+      state.openingFile=true;
       resetFile();loading(true,tr('loadingDb'),file.name);
       try{
         await nextFrame();const raw=new Uint8Array(await file.arrayBuffer());if(!validSqliteHeader(raw)){toast(tr('invalidSqlite'));return}
         const SQL=await ensureSql();
-        state.db=new SQL.Database(raw);state.file=file;state.page=0;state.selectedTable=null;state.tableMeta.clear();state.rowCounts.clear();state.inferredRelations=[];state.rowFilter='';state.sortColumn='';state.sortDir='';state.visibleColumns.clear();state.globalSearchHits=[];state.health=null;
+        state.db=new SQL.Database(raw);
+        state.db.run('PRAGMA query_only = ON;');
+        $('#walNotice').hidden=raw[18]!==2&&raw[19]!==2;
+        state.file=file;state.page=0;state.selectedTable=null;state.tableMeta.clear();state.rowCounts.clear();state.inferredRelations=[];state.rowFilter='';state.sortColumn='';state.sortDir='';state.visibleColumns.clear();state.globalSearchHits=[];state.health=null;
         await inspectDatabase();
         $('#dropzone').hidden=true;$('#workspace').hidden=false;$('#mobileNav').hidden=false;$('#headerFile').hidden=false;$('#mobileFilebar').hidden=false;
         $('#headerFileName').textContent=$('#mobileFileName').textContent=file.name;$('#headerFileSize').textContent=$('#mobileFileSize').textContent=bytes(file.size);
         $('#overviewSubtitle').textContent=`${file.name} · ${bytes(file.size)}`;switchView('overview');toast(tr('fileLoaded'));
       }catch(err){console.error(err);resetFile();toast(`${tr('invalidSqlite')} ${err.message||''}`)}
-      finally{loading(false)}
+      finally{state.openingFile=false;loading(false)}
     }
     async function inspectDatabase(){
-      const objects=objectRows("SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name");
+      const objects=objectRows("SELECT type,name,tbl_name,sql FROM sqlite_master WHERE lower(substr(name,1,7)) <> 'sqlite_' ORDER BY type,name");
       state.tables=objects.filter(o=>o.type==='table');state.views=objects.filter(o=>o.type==='view');state.indexes=objects.filter(o=>o.type==='index');state.triggers=objects.filter(o=>o.type==='trigger');
+      for(const view of state.views){
+        let info=[];
+        try{info=objectRows(`PRAGMA table_xinfo(${qi(view.name)})`).filter(c=>c.hidden!==1)}catch{}
+        state.tableMeta.set(view.name,{info,fks:[],idx:[],sql:view.sql||''});
+      }
       let done=0;
       for(const table of state.tables){
         const name=table.name;let info=[],fks=[],idx=[];
-        try{info=objectRows(`PRAGMA table_info(${qi(name)})`)}catch{}
+        try{info=objectRows(`PRAGMA table_xinfo(${qi(name)})`).filter(c=>c.hidden!==1)}catch{}
         try{fks=objectRows(`PRAGMA foreign_key_list(${qi(name)})`)}catch{}
         try{idx=objectRows(`PRAGMA index_list(${qi(name)})`)}catch{}
         state.tableMeta.set(name,{info,fks,idx,sql:table.sql||''});
@@ -368,10 +389,31 @@ ORDER BY type, name;</textarea>
       buildExplicitRelations();renderNavigation();renderOverview();renderDDL();
       loading(true,tr('loadingRelations'));await nextFrame();await inferRelationships();renderRelations();populateErdFocus();renderERD();populateAnalyzeSelect();buildHealth(false);
     }
+    const foldIdentifier=name=>name.replace(/[A-Z]/g,letter=>letter.toLowerCase());
     function buildExplicitRelations(){
       state.explicitRelations=[];
-      for(const [table,m] of state.tableMeta.entries())for(const fk of m.fks){
-        state.explicitRelations.push({kind:'defined',fromTable:table,fromColumn:fk.from,toTable:fk.table,toColumn:fk.to||'rowid',confidence:1})
+      const tableNames=new Map(state.tables.map(t=>[foldIdentifier(t.name),t.name]));
+      for(const {name:table} of state.tables){
+        const groups=new Map();
+        for(const fk of state.tableMeta.get(table).fks){
+          if(!groups.has(fk.id))groups.set(fk.id,[]);
+          groups.get(fk.id).push(fk);
+        }
+        for(const group of groups.values()){
+          group.sort((a,b)=>a.seq-b.seq);
+          const toTable=tableNames.get(foldIdentifier(group[0].table))||group[0].table;
+          const parentColumns=state.tableMeta.get(toTable)?.info||[];
+          const pk=parentColumns.filter(c=>c.pk>0).sort((a,b)=>a.pk-b.pk);
+          const parentNames=new Map(parentColumns.map(c=>[foldIdentifier(c.name),c.name]));
+          const childNames=new Map(state.tableMeta.get(table).info.map(c=>[foldIdentifier(c.name),c.name]));
+          const parts=group.map(fk=>({
+            fromColumn:childNames.get(foldIdentifier(fk.from))||fk.from,
+            toColumn:fk.to===null?(group.length===pk.length?pk[fk.seq]?.name??null:null):(parentNames.get(foldIdentifier(fk.to))||fk.to)
+          }));
+          for(const part of parts){
+            state.explicitRelations.push({kind:'defined',fromTable:table,toTable,...part,parts,confidence:1});
+          }
+        }
       }
     }
     function normalizeType(type=''){const t=String(type).toUpperCase();if(/INT/.test(t))return'int';if(/CHAR|CLOB|TEXT/.test(t))return'text';if(/REAL|FLOA|DOUB/.test(t))return'real';if(/BLOB/.test(t)||!t)return'blob';return'numeric'}
@@ -379,10 +421,12 @@ ORDER BY type, name;</textarea>
     async function inferRelationships(){
       const explicitKey=new Set(state.explicitRelations.map(r=>`${r.fromTable}.${r.fromColumn}->${r.toTable}.${r.toColumn}`));
       const candidates=[];
-      for(const [fromTable,m] of state.tableMeta.entries()){
+      for(const {name:fromTable} of state.tables){
+        const m=state.tableMeta.get(fromTable);
         for(const col of m.info){
           const cn=String(col.name).toLowerCase();if(!(cn==='id'||cn.endsWith('_id')||cn.endsWith('id')))continue;
-          for(const [toTable,tm] of state.tableMeta.entries()){
+          for(const {name:toTable} of state.tables){
+            const tm=state.tableMeta.get(toTable);
             if(fromTable===toTable)continue;
             const pkCols=tm.info.filter(c=>Number(c.pk)>0);
             const targets=pkCols.length?pkCols:tm.info.filter(c=>String(c.name).toLowerCase()==='id');
@@ -416,9 +460,9 @@ ORDER BY type, name;</textarea>
       const q=$('#tableSearch').value.trim().toLowerCase();const list=$('#tableList');list.innerHTML='';
       state.tables.filter(t=>!q||t.name.toLowerCase().includes(q)).forEach(t=>{const b=document.createElement('button');b.className='table-button'+(state.selectedTable===t.name?' active':'');b.type='button';b.innerHTML=`<span class="table-name">${esc(t.name)}</span><span class="table-count">${fmt(state.rowCounts.get(t.name)||0)}</span>`;b.onclick=()=>selectTable(t.name);list.append(b)});
       const viewList=$('#viewList');viewList.innerHTML='';state.views.forEach(v=>{const b=document.createElement('button');b.className='table-button';b.type='button';b.innerHTML=`<span class="table-name">${esc(v.name)}</span>`;b.onclick=()=>selectTable(v.name,true);viewList.append(b)});$('#viewListSection').hidden=!state.views.length;
-      const selector=$('#dataTableSelect');if(selector){const current=selector.value;selector.innerHTML=[...state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`),...state.views.map(v=>`<option value="${esc(v.name)}" data-view-object="1">${esc(v.name)} · view</option>`)].join('');if(state.selectedTable)selector.value=state.selectedTable;else if(current)selector.value=current}
+      const selector=$('#dataTableSelect');if(selector){selector.innerHTML=`<option value="" disabled>${esc(tr('selectObject'))}</option>`+[...state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`),...state.views.map(v=>`<option value="${esc(v.name)}" data-view-object="1">${esc(v.name)} · view</option>`)].join('');selector.value=state.selectedTable??''}
     }
-    function switchView(view){state.currentView=view;$$('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='schema')setTimeout(renderERD,0);if(view==='analyze'&&state.selectedTable){$('#analyzeTableSelect').value=state.selectedTable;profileTable(state.selectedTable)}}
+    function switchView(view){state.currentView=view;$$('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='schema')setTimeout(renderERD,0);if(view==='analyze')profileTable($('#analyzeTableSelect').value)}
     function renderOverview(){
       if(!state.db)return;
       const total=Array.from(state.rowCounts.values()).reduce((a,b)=>a+b,0),relations=state.explicitRelations.length+state.inferredRelations.length;
@@ -444,16 +488,16 @@ ORDER BY type, name;</textarea>
       const insights=[];if(noPk.length)insights.push({kind:'warning',title:`${tr('noPk')}: ${noPk.length}`,body:noPk.slice(0,5).map(x=>x.name).join(', ')});if(missingIndex.length)insights.push({kind:'warning',title:`${tr('fkNoIndex')}: ${missingIndex.length}`,body:missingIndex.slice(0,4).map(r=>`${r.fromTable}.${r.fromColumn}`).join(', ')});if(state.inferredRelations.length)insights.push({kind:'normal',title:`${tr('inferredCount')}: ${state.inferredRelations.length}`,body:state.inferredRelations.slice(0,3).map(r=>`${r.fromTable}.${r.fromColumn} → ${r.toTable}.${r.toColumn}`).join(', ')});
       $('#insights').innerHTML=insights.length?insights.map(x=>`<div class="insight ${x.kind==='warning'?'warning':''}"><span class="insight-icon">${x.kind==='warning'?'⚠':'◎'}</span><div><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></div></div>`).join(''):`<div class="empty-state"><p>${esc(tr('noInsights'))}</p></div>`
     }
-    function relationHtml(r){return`<div class="relation-row"><span class="relation-col" title="${esc(r.fromTable+'.'+r.fromColumn)}">${esc(r.fromTable)}.<b>${esc(r.fromColumn)}</b></span><span class="relation-arrow">→</span><span class="relation-col" title="${esc(r.toTable+'.'+r.toColumn)}">${esc(r.toTable)}.<b>${esc(r.toColumn)}</b></span><span class="confidence ${r.kind==='inferred'?'inferred':''}">${r.kind==='inferred'?`${tr('inferred')} ${Math.round(r.confidence*100)}%`:tr('defined')}</span></div>`}
+    function relationHtml(r){return`<div class="relation-row"><span class="relation-col" title="${esc(r.fromTable+'.'+r.fromColumn)}">${esc(r.fromTable)}.<b>${esc(r.fromColumn)}</b></span><span class="relation-arrow">→</span><span class="relation-col" title="${esc(r.toTable+'.'+r.toColumn??tr('unresolvedKey'))}">${esc(r.toTable)}.<b>${esc(r.toColumn??tr('unresolvedKey'))}</b></span><span class="confidence ${r.kind==='inferred'?'inferred':''}">${r.kind==='inferred'?`${tr('inferred')} ${Math.round(r.confidence*100)}%`:tr('defined')}</span></div>`}
     function renderRelations(){const all=[...state.explicitRelations,...state.inferredRelations];$('#relationList').innerHTML=all.length?all.map(relationHtml).join(''):`<div class="empty-state"><p>${esc(tr('noRelations'))}</p></div>`;if(state.db)renderOverview()}
     function renderDDL(){const parts=[];for(const o of [...state.tables,...state.views,...state.indexes,...state.triggers])if(o.sql)parts.push(`-- ${o.type}: ${o.name}\n${o.sql};`);$('#ddlText').textContent=parts.join('\n\n')}
     async function selectTable(name,isView=false){
       const changed=state.selectedTable!==name;state.selectedTable=name;state.page=0;state.currentTableIsView=isView;
-      if(changed){state.rowFilter='';state.sortColumn='';state.sortDir='';state.visibleColumns.clear();$('#rowFilterInput').value=''}
-      renderNavigation();switchView('tables');await renderTableData(isView);if(!isView&&$('#analyzeTableSelect option[value="'+CSS.escape(name)+'"]'))$('#analyzeTableSelect').value=name
+      if(changed){clearTimeout(state.filterTimer);state.relatedFilter=null;state.rowFilter='';state.sortColumn='';state.sortDir='';state.visibleColumns.clear();$('#rowFilterInput').value=''}
+      renderNavigation();switchView('tables');await renderTableData(isView);if(!isView)$('#analyzeTableSelect').value=name
     }
     function searchableColumns(name){const meta=state.tableMeta.get(name);return (meta?.info||[]).filter(c=>!/BLOB/i.test(String(c.type||'')))}
-    function buildFilterSql(name,filter){if(!filter)return{where:'',params:[]};const cols=searchableColumns(name);if(!cols.length)return{where:'',params:[]};return{where:' WHERE '+cols.map(c=>`CAST(${qi(c.name)} AS TEXT) LIKE ? ESCAPE '\\'`).join(' OR '),params:cols.map(()=>`%${String(filter).replace(/([%_\\])/g,'\\$1')}%`)}}
+    function buildFilterSql(name,filter){if(state.relatedFilter)return state.relatedFilter;if(!filter)return{where:'',params:[]};const cols=searchableColumns(name);if(!cols.length)return{where:' WHERE 0',params:[]};return{where:' WHERE '+cols.map(c=>`CAST(${qi(c.name)} AS TEXT) LIKE ? ESCAPE '\\'`).join(' OR '),params:cols.map(()=>`%${String(filter).replace(/([%_\\])/g,'\\$1')}%`)}}
     function setupColumnsMenu(){
       const menu=$('#columnsMenu');
       document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.open&&!document.querySelector('dialog[open]')){e.preventDefault();menu.open=false;menu.querySelector('summary').focus()}});
@@ -462,12 +506,38 @@ ORDER BY type, name;</textarea>
     }
     function renderColumnMenu(columns){const box=$('#columnsPopover');if(!columns?.length){box.innerHTML='';return}if(!state.visibleColumns.size)columns.forEach(c=>state.visibleColumns.add(c));box.innerHTML=columns.map(c=>`<label class="column-check"><input type="checkbox" data-visible-column="${esc(c)}" ${state.visibleColumns.has(c)?'checked':''}> <span>${esc(c)}</span></label>`).join('');$$('[data-visible-column]').forEach(cb=>cb.onchange=()=>{cb.checked?state.visibleColumns.add(cb.dataset.visibleColumn):state.visibleColumns.delete(cb.dataset.visibleColumn);if(!state.visibleColumns.size){cb.checked=true;state.visibleColumns.add(cb.dataset.visibleColumn)}renderTableData(state.currentTableIsView)})}
     async function renderTableData(isView=state.currentTableIsView){
-      if(!state.selectedTable)return;state.currentTableIsView=isView;const name=state.selectedTable,baseTotal=isView?null:(state.rowCounts.get(name)||0),offset=state.page*state.pageSize;$('#dataTitle').textContent=name;$('#dataToolbar').hidden=false;
-      const meta=state.tableMeta.get(name);const allColumns=meta?.info?.map(c=>c.name)||[];if(!state.visibleColumns.size)allColumns.forEach(c=>state.visibleColumns.add(c));renderColumnMenu(allColumns);
-      const f=buildFilterSql(name,state.rowFilter);let total=baseTotal;if(!isView&&state.rowFilter){try{total=Number(scalar(`SELECT COUNT(*) FROM ${qi(name)}${f.where}`,f.params))||0}catch{total=0}}
-      $('#dataSubtitle').textContent=isView?'View':`${fmt(total)} ${tr('rows')}`;$('#filterMeta').textContent=state.rowFilter?`${tr('filteredRows')}: ${fmt(total)}`:'';
-      const order=state.sortColumn?` ORDER BY ${qi(state.sortColumn)} ${state.sortDir==='desc'?'DESC':'ASC'}`:'';let r;try{r=execRows(`SELECT * FROM ${qi(name)}${f.where}${order} LIMIT ${state.pageSize} OFFSET ${offset}`,f.params)}catch(err){$('#dataContainer').innerHTML=`<div class="error-box">${esc(err.message)}</div>`;return}
-      if(!allColumns.length){if(!state.visibleColumns.size)r.columns.forEach(c=>state.visibleColumns.add(c));renderColumnMenu(r.columns)}state.currentTableData=r;$('#dataContainer').innerHTML=tableHtml(r.columns,r.rows,{interactive:true,recordActions:!isView,visibleColumns:state.visibleColumns,sortColumn:state.sortColumn,sortDir:state.sortDir});bindInteractiveTable();$('#pagination').hidden=isView||!total;$('#pageInfo').textContent=total&&r.rows.length?`${offset+1}–${Math.min(offset+r.rows.length,total)} / ${fmt(total)}`:total===0?'0':'';$('#prevPage').disabled=state.page<=0;$('#nextPage').disabled=!total||offset+state.pageSize>=total
+      if(!state.selectedTable)return;
+      state.currentTableIsView=isView;
+      const name=state.selectedTable;
+      const allColumns=state.tableMeta.get(name)?.info.map(c=>c.name)||[];
+      const f=buildFilterSql(name,state.rowFilter);
+      $('#dataTitle').textContent=name;
+      $('#dataToolbar').hidden=false;
+      state.currentTableData=null;
+      $('#pagination').hidden=true;
+      $('#prevPage').disabled=$('#nextPage').disabled=true;
+      $('#exportTableCsv').disabled=$('#exportTableJson').disabled=true;
+      try{
+        const total=isView||f.where?Number(scalar(`SELECT COUNT(*) FROM ${qi(name)}${f.where}`,f.params)):state.rowCounts.get(name)||0;
+        const offset=state.page*state.pageSize;
+        const order=state.sortColumn?` ORDER BY ${qi(state.sortColumn)} ${state.sortDir==='desc'?'DESC':'ASC'}`:'';
+        const r=execRows(`SELECT * FROM ${qi(name)}${f.where}${order} LIMIT ${state.pageSize} OFFSET ${offset}`,f.params);
+        renderColumnMenu(allColumns.length?allColumns:r.columns);
+        state.currentTableData=r;
+        $('#dataSubtitle').textContent=`${fmt(total)} ${tr('rows')}`;
+        $('#filterMeta').textContent=f.where?`${tr('filteredRows')}: ${fmt(total)}`:'';
+        $('#dataContainer').innerHTML=tableHtml(r.columns,r.rows,{interactive:true,recordActions:!isView,visibleColumns:state.visibleColumns,sortColumn:state.sortColumn,sortDir:state.sortDir});
+        bindInteractiveTable();
+        $('#pagination').hidden=!total;
+        $('#pageInfo').textContent=total&&r.rows.length?`${offset+1}–${offset+r.rows.length} / ${fmt(total)}`:'0';
+        $('#prevPage').disabled=state.page<=0;
+        $('#nextPage').disabled=offset+state.pageSize>=total;
+        $('#exportTableCsv').disabled=!r.columns.length;
+        $('#exportTableJson').disabled=!r.columns.length||hasDuplicateColumns(r.columns);
+      }catch(err){
+        $('#dataSubtitle').textContent=$('#filterMeta').textContent='';
+        $('#dataContainer').innerHTML=`<div class="error-box">${esc(err.message)}</div>`;
+      }
     }
     function valueHtml(v){if(v===null)return'<span class="null">NULL</span>';if(v instanceof Uint8Array)return`<span class="blob">&lt;BLOB ${bytes(v.length)}&gt;</span>`;const s=String(v);return`<span title="${esc(s)}">${esc(s)}</span>`}
     function tableHtml(columns,rows,opt={}){if(!columns.length)return`<div class="empty-state"><p>0 ${esc(tr('rows'))}</p></div>`;const indexes=columns.map((c,i)=>i).filter(i=>!opt.visibleColumns||opt.visibleColumns.has(columns[i]));const visible=indexes.map(i=>columns[i]);return`<div class="table-wrap"><table><thead><tr>${opt.recordActions?'<th class="row-action-head" title="Relationships">↗</th>':''}${visible.map(c=>opt.interactive?`<th class="resizable"><button class="sort-button" type="button" data-sort-column="${esc(c)}">${esc(c)}${opt.sortColumn===c?`<span class="sort-mark">${opt.sortDir==='desc'?'▼':'▲'}</span>`:''}</button></th>`:`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map((row,ri)=>`<tr>${opt.recordActions?`<td class="row-action-cell"><button class="row-detail-button" type="button" data-record-row="${ri}" title="Relationships">↗</button></td>`:''}${indexes.map(ci=>`<td>${opt.interactive?`<button class="cell-button" type="button" data-cell-row="${ri}" data-cell-col="${ci}">${valueHtml(row[ci])}</button>`:valueHtml(row[ci])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
@@ -476,30 +546,35 @@ ORDER BY type, name;</textarea>
       $$('[data-cell-row]').forEach(b=>b.onclick=()=>{const r=Number(b.dataset.cellRow),c=Number(b.dataset.cellCol),data=state.currentTableData;if(data?.rows[r])openCellInspector(data.columns[c],data.rows[r][c])});
       $$('[data-record-row]').forEach(b=>b.onclick=()=>{const r=Number(b.dataset.recordRow),data=state.currentTableData;if(data?.rows[r])openRecordRelationships(data.columns,data.rows[r])})
     }
-    function populateAnalyzeSelect(){const s=$('#analyzeTableSelect');s.innerHTML=state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');if(state.tables.length){state.selectedTable=state.selectedTable||state.tables[0].name;s.value=state.selectedTable}}
+    function populateAnalyzeSelect(){
+      $('#analyzeTableSelect').innerHTML=state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+    }
     async function profileTable(name){
+      const db=state.db, request=++state.profileRequest;
       if(!name||!state.db)return;const meta=state.tableMeta.get(name);if(!meta)return;$('#profileContainer').innerHTML=`<div class="empty-state"><p>${esc(tr('loadingDb'))}</p></div>`;await nextFrame();const total=state.rowCounts.get(name)||0;const cards=[];
-      for(let i=0;i<meta.info.length;i++){const c=meta.info[i],col=qi(c.name);let nulls=0,distinct=0,top=[];
+      for(let i=0;i<meta.info.length;i++){if(state.db!==db||state.profileRequest!==request)return;const c=meta.info[i],col=qi(c.name);let nulls=0,distinct=0,top=[];
         try{nulls=Number(scalar(`SELECT COUNT(*) FROM ${qi(name)} WHERE ${col} IS NULL`))||0}catch{}try{distinct=Number(scalar(`SELECT COUNT(DISTINCT ${col}) FROM ${qi(name)}`))||0}catch{}try{top=execRows(`SELECT ${col}, COUNT(*) c FROM ${qi(name)} WHERE ${col} IS NOT NULL GROUP BY ${col} ORDER BY c DESC LIMIT 5`).rows}catch{}
         const ratio=total?Math.round(nulls/total*1000)/10:0;cards.push(`<article class="profile-card"><div class="profile-head"><span class="profile-name">${esc(c.name)}${Number(c.pk)>0?' 🔑':''}</span><span class="type-pill">${esc(c.type||'ANY')}</span></div><div class="profile-stats"><div class="mini-stat"><strong>${fmt(nulls)}</strong><span>${esc(tr('nulls'))} · ${ratio}%</span></div><div class="mini-stat"><strong>${fmt(distinct)}</strong><span>${esc(tr('distinct'))}</span></div><div class="mini-stat"><strong>${fmt(total)}</strong><span>${esc(tr('totalRows'))}</span></div></div><div class="top-values">${top.map(([v,n])=>`<span class="value-pill" title="${esc(String(v))}">${esc(String(v))} · ${fmt(n)}</span>`).join('')||'<span class="value-pill">—</span>'}</div></article>`);
         if(i%2===1)await nextFrame()
-      }$('#profileContainer').innerHTML=`<div class="profile-grid">${cards.join('')}</div>`
+      }if(state.db!==db||state.profileRequest!==request)return;
+      $('#profileContainer').innerHTML=`<div class="profile-grid">${cards.join('')}</div>`
     }
     function populateErdFocus(){const sel=$('#erdFocusSelect');if(!sel)return;const current=sel.value;sel.innerHTML=`<option value="">${esc(tr('allTables'))}</option>`+state.tables.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');if(state.tables.some(t=>t.name===current))sel.value=current}
     function erdTables(){const focus=$('#erdFocusSelect')?.value||'',related=$('#erdRelatedOnly')?.checked;if(!focus||!related)return state.tables.slice(0,40);const names=new Set([focus]);for(const r of [...state.explicitRelations,...state.inferredRelations])if(r.fromTable===focus)names.add(r.toTable);else if(r.toTable===focus)names.add(r.fromTable);return state.tables.filter(t=>names.has(t.name)).slice(0,40)}
     function renderERD(){
-      const svg=$('#erdSvg');if(!svg||!state.tables.length)return;const tables=erdTables(),cols=Math.min(3,Math.max(1,Math.ceil(Math.sqrt(tables.length)))),nodeW=220,rowH=26,headH=34,gapX=70,gapY=70;const positions=new Map();let maxY=0;
+      const svg=$('#erdSvg');if(!svg)return;if(!state.tables.length){svg.replaceChildren();$('#erdCount').textContent='';return}const tables=erdTables(),cols=Math.min(3,Math.max(1,Math.ceil(Math.sqrt(tables.length)))),nodeW=220,rowH=26,headH=34,gapX=70,gapY=70;const positions=new Map();let maxY=0;
       $('#erdCount').textContent=`${tables.length} / ${state.tables.length} tables`;tables.forEach((t,i)=>{const meta=state.tableMeta.get(t.name),visible=(meta?.info||[]).slice(0,7),h=headH+Math.max(1,visible.length)*rowH+8,x=30+(i%cols)*(nodeW+gapX),y=30+Math.floor(i/cols)*(250+gapY);positions.set(t.name,{x,y,w:nodeW,h});maxY=Math.max(maxY,y+h)});
       const width=30+Math.min(cols,tables.length)*(nodeW+gapX),height=maxY+40;svg.setAttribute('viewBox',`0 0 ${Math.max(760,width)} ${Math.max(560,height)}`);svg.setAttribute('width',Math.max(760,width));svg.setAttribute('height',Math.max(560,height));
-      const rels=[...state.explicitRelations,...state.inferredRelations].filter(r=>positions.has(r.fromTable)&&positions.has(r.toTable));let edges='';rels.forEach(r=>{const a=positions.get(r.fromTable),b=positions.get(r.toTable),x1=a.x+a.w,y1=a.y+a.h/2,x2=b.x,y2=b.y+b.h/2,mid=(x1+x2)/2;edges+=`<path class="erd-edge ${r.kind==='inferred'?'inferred':''}" d="M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}"><title>${esc(r.fromTable+'.'+r.fromColumn+' → '+r.toTable+'.'+r.toColumn)}</title></path>`});
+      const rels=[...state.explicitRelations,...state.inferredRelations].filter(r=>positions.has(r.fromTable)&&positions.has(r.toTable));let edges='';rels.forEach(r=>{const a=positions.get(r.fromTable),b=positions.get(r.toTable),x1=a.x+a.w,y1=a.y+a.h/2,x2=b.x,y2=b.y+b.h/2,mid=(x1+x2)/2;edges+=`<path class="erd-edge ${r.kind==='inferred'?'inferred':''}" d="M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}"><title>${esc(r.fromTable+'.'+r.fromColumn+' → '+r.toTable+'.'+(r.toColumn??tr('unresolvedKey')))}</title></path>`});
       let nodes='';tables.forEach(t=>{const p=positions.get(t.name),meta=state.tableMeta.get(t.name),visible=(meta?.info||[]).slice(0,7);nodes+=`<g class="erd-node" transform="translate(${p.x} ${p.y})"><rect width="${p.w}" height="${p.h}" rx="10"/><path class="head" d="M10 0h${p.w-20}a10 10 0 0 1 10 10v24H0V10A10 10 0 0 1 10 0z"/><text class="name" x="12" y="22">${esc(t.name)}</text>${visible.map((c,i)=>`<text x="12" y="${headH+18+i*rowH}">${Number(c.pk)>0?'PK ':''}${esc(c.name)} <tspan fill="#73766f">${esc(c.type||'')}</tspan></text>`).join('')}${(meta?.info.length||0)>7?`<text x="12" y="${headH+18+7*rowH}" fill="#777">… +${meta.info.length-7}</text>`:''}</g>`});svg.innerHTML=edges+nodes
     }
     async function runGlobalSearch(){
-      if(!state.db)return;const q=$('#globalSearchInput').value.trim();if(!q){state.globalSearchHits=[];renderGlobalSearchResults();return}$('#globalSearchResults').innerHTML=`<div class="empty-state"><p>${esc(tr('searching'))}</p></div>`;$('#clearGlobalSearch').hidden=false;await nextFrame();const hits=[];const maxHits=100;
-      for(let ti=0;ti<state.tables.length&&hits.length<maxHits;ti++){const table=state.tables[ti],cols=searchableColumns(table.name);for(const col of cols){if(hits.length>=maxHits)break;try{const pattern=`%${q.replace(/([%_\\])/g,'\\$1')}%`;const r=execRows(`SELECT ${qi(col.name)} FROM ${qi(table.name)} WHERE CAST(${qi(col.name)} AS TEXT) LIKE ? ESCAPE '\\' LIMIT ?`,[pattern,Math.min(8,maxHits-hits.length)]);for(const row of r.rows)hits.push({table:table.name,column:col.name,value:row[0]})}catch{}}if(ti%2===1)await nextFrame()}
+      if(!state.db)return;const db=state.db, request=++state.searchRequest;const q=$('#globalSearchInput').value.trim();if(!q){state.globalSearchHits=[];renderGlobalSearchResults();return}$('#globalSearchResults').innerHTML=`<div class="empty-state"><p>${esc(tr('searching'))}</p></div>`;$('#clearGlobalSearch').hidden=false;await nextFrame();const hits=[];const maxHits=100;
+      for(let ti=0;ti<state.tables.length&&hits.length<maxHits;ti++){if(state.db!==db||state.searchRequest!==request)return;const table=state.tables[ti],cols=searchableColumns(table.name);for(const col of cols){if(hits.length>=maxHits)break;try{const pattern=`%${q.replace(/([%_\\])/g,'\\$1')}%`;const r=execRows(`SELECT ${qi(col.name)} FROM ${qi(table.name)} WHERE CAST(${qi(col.name)} AS TEXT) LIKE ? ESCAPE '\\' LIMIT ?`,[pattern,Math.min(8,maxHits-hits.length)]);for(const row of r.rows)hits.push({table:table.name,column:col.name,value:row[0]})}catch{}}if(ti%2===1)await nextFrame()}
+      if(state.db!==db||state.searchRequest!==request)return;
       state.globalSearchHits=hits;renderGlobalSearchResults()
     }
-    function renderGlobalSearchResults(){const box=$('#globalSearchResults');if(!box)return;if(!state.globalSearchHits.length){box.innerHTML=$('#globalSearchInput').value.trim()?`<div class="empty-state"><p>${esc(tr('searchNoResults'))}</p></div>`:'';return}const groups=new Map();for(const h of state.globalSearchHits){if(!groups.has(h.table))groups.set(h.table,[]);groups.get(h.table).push(h)}box.innerHTML=`<div class="search-results">${[...groups.entries()].map(([table,hits])=>`<div class="search-group"><div class="search-group-head"><strong>${esc(table)}</strong><span>${hits.length}</span></div>${hits.map((h,i)=>`<button class="search-hit" type="button" data-search-table="${esc(table)}" data-search-index="${i}"><span class="search-hit-col">${esc(h.column)}</span><span class="search-hit-value">${valueHtml(h.value)}</span></button>`).join('')}</div>`).join('')}</div>`;$$('[data-search-table]').forEach(b=>b.onclick=async()=>{const table=b.dataset.searchTable,q=$('#globalSearchInput').value.trim();await selectTable(table,false);state.rowFilter=q;$('#rowFilterInput').value=q;state.page=0;await renderTableData(false)})}
+    function renderGlobalSearchResults(){const box=$('#globalSearchResults');if(!box)return;if(!state.globalSearchHits.length){box.innerHTML=$('#globalSearchInput').value.trim()?`<div class="empty-state"><p>${esc(tr('searchNoResults'))}</p></div>`:'';return}const groups=new Map();for(const h of state.globalSearchHits){if(!groups.has(h.table))groups.set(h.table,[]);groups.get(h.table).push(h)}box.innerHTML=`<div class="search-results">${[...groups.entries()].map(([table,hits])=>`<div class="search-group"><div class="search-group-head"><strong>${esc(table)}</strong><span>${hits.length}</span></div>${hits.map((h,i)=>`<button class="search-hit" type="button" data-search-table="${esc(table)}" data-search-index="${i}"><span class="search-hit-col">${esc(h.column)}</span><span class="search-hit-value">${valueHtml(h.value)}</span></button>`).join('')}</div>`).join('')}</div>`;$$('[data-search-table]').forEach(b=>b.onclick=async()=>{const table=b.dataset.searchTable,q=$('#globalSearchInput').value.trim();await selectTable(table,false);state.relatedFilter=null;state.rowFilter=q;$('#rowFilterInput').value=q;state.page=0;await renderTableData(false)})}
     function indexCoversColumn(table,column){const meta=state.tableMeta.get(table);for(const idx of meta?.idx||[]){try{const cols=objectRows(`PRAGMA index_info(${qi(idx.name)})`).map(x=>x.name);if(cols[0]===column)return true}catch{}}return false}
     function buildHealth(deep=false){
       if(!state.db)return;const issues=[];let score=100;const noPk=state.tables.filter(t=>!(state.tableMeta.get(t.name)?.info||[]).some(c=>Number(c.pk)>0));if(noPk.length){score-=Math.min(15,noPk.length*3);issues.push({kind:'warning',title:`${tr('noPk')}: ${noPk.length}`,body:noPk.slice(0,8).map(t=>t.name).join(', ')})}
@@ -513,34 +588,79 @@ ORDER BY type, name;</textarea>
     function bytesToText(v){try{return new TextDecoder('utf-8',{fatal:true}).decode(v)}catch{return''}}
     function detectValue(v){
       if(v===null)return{type:tr('nullValue')};if(v instanceof Uint8Array){const a=v,head=Array.from(a.slice(0,12));let mime='',label=tr('binaryValue');if(head[0]===0x89&&head[1]===0x50&&head[2]===0x4e&&head[3]===0x47){mime='image/png';label='PNG image'}else if(head[0]===0xff&&head[1]===0xd8){mime='image/jpeg';label='JPEG image'}else if(String.fromCharCode(...a.slice(0,6)).startsWith('GIF8')){mime='image/gif';label='GIF image'}else if(String.fromCharCode(...a.slice(0,12)).includes('WEBP')){mime='image/webp';label='WebP image'}else if(head[0]===0x25&&head[1]===0x50&&head[2]===0x44&&head[3]===0x46)label='PDF';else if(head[0]===0x50&&head[1]===0x4b)label='ZIP / archive';const text=bytesToText(a);return{type:mime?tr('imageValue'):label,mime,text:text&&/^[\s\x20-\x7e\u0080-\uffff]+$/.test(text.slice(0,1000))?text:''}}
+      if(typeof v==='bigint')return{type:tr('numberValue')};
       if(typeof v==='number'){let date='';if(v>946684800&&v<4102444800)date=new Date(v*1000).toLocaleString();else if(v>946684800000&&v<4102444800000)date=new Date(v).toLocaleString();return{type:tr('numberValue'),date}}
       const x=String(v),trim=x.trim();try{const j=JSON.parse(trim);if(j&&typeof j==='object')return{type:'JSON',json:j}}catch{}if(/^https?:\/\//i.test(trim))return{type:tr('urlValue'),url:trim};if(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(trim))return{type:tr('uuidValue')};const d=Date.parse(trim);if(trim.length>=8&&Number.isFinite(d)&&/[T:\/-]/.test(trim))return{type:tr('textValue'),date:new Date(d).toLocaleString()};if(trim.length>24&&trim.length%4===0&&/^[A-Za-z0-9+/]+={0,2}$/.test(trim))return{type:tr('base64Value')};return{type:tr('textValue')}
     }
     function openCellInspector(column,value){if(state.cellBlobUrl){URL.revokeObjectURL(state.cellBlobUrl);state.cellBlobUrl=null}const d=detectValue(value),raw=value instanceof Uint8Array?Array.from(value.slice(0,256)).map(x=>x.toString(16).padStart(2,'0')).join(' ')+(value.length>256?' …':''):String(value??'NULL');let preview='';if(value instanceof Uint8Array&&d.mime){state.cellBlobUrl=URL.createObjectURL(new Blob([value],{type:d.mime}));preview=`<img class="preview-image" src="${state.cellBlobUrl}" alt="BLOB preview">`}else if(d.json)preview=`<pre class="json-tree">${esc(JSON.stringify(d.json,null,2))}</pre>`;else if(d.url)preview=`<a class="button" href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url)}</a>`;else if(value instanceof Uint8Array&&d.text)preview=`<pre class="raw-value">${esc(d.text.slice(0,12000))}</pre>`;const meta=[['Column',column],[tr('valueType'),d.type],...(d.date?[[tr('detectedDate'),d.date]]:[]),...(value instanceof Uint8Array?[['Size',bytes(value.length)]]:[])];$('#cellDialogBody').innerHTML=`<div class="inspector-grid"><section class="inspect-section"><h3>${esc(tr('valueType'))}</h3><div class="inspect-meta">${meta.map(([k,v])=>`<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join('')}</div></section><section class="inspect-section"><h3>${esc(tr('rawValue'))} <button class="button small" id="copyCellValue" type="button">${esc(tr('copyValue'))}</button></h3><pre class="raw-value">${esc(raw)}</pre></section>${preview?`<section class="inspect-section" style="grid-column:1/-1"><h3>Preview</h3>${preview}</section>`:''}</div>`;$('#copyCellValue').onclick=async()=>{try{await navigator.clipboard.writeText(value instanceof Uint8Array?raw:String(value??''));toast(tr('copyValue'))}catch{toast('Copy failed')}};$('#cellDialog').showModal()}
     function relationCandidatesForTable(table){return[...state.explicitRelations,...state.inferredRelations].filter(r=>r.fromTable===table||r.toTable===table)}
     function shortRow(columns,row){return columns.slice(0,4).map((c,i)=>`${c}=${row[i] instanceof Uint8Array?`BLOB(${row[i].length})`:String(row[i]??'NULL')}`).join(' · ')}
-    function openRecordRelationships(columns,row){const table=state.selectedTable,obj=Object.fromEntries(columns.map((c,i)=>[c,row[i]])),items=[];for(const rel of relationCandidatesForTable(table)){let targetTable,targetColumn,value,direction;if(rel.fromTable===table){value=obj[rel.fromColumn];targetTable=rel.toTable;targetColumn=rel.toColumn;direction=tr('outgoing')}else{value=obj[rel.toColumn];targetTable=rel.fromTable;targetColumn=rel.fromColumn;direction=tr('incoming')}if(value===null||value===undefined||value instanceof Uint8Array)continue;try{const count=Number(scalar(`SELECT COUNT(*) FROM ${qi(targetTable)} WHERE ${qi(targetColumn)} = ?`,[value]))||0;if(count)items.push({rel,targetTable,targetColumn,value,count,direction})}catch{}}
-      $('#recordDialogBody').innerHTML=`<div class="inspect-section"><h3>${esc(table)}</h3><div class="record-fields">${columns.map((c,i)=>`<div class="record-field"><span>${esc(c)}</span><strong title="${esc(String(row[i]??'NULL'))}">${esc(row[i] instanceof Uint8Array?`<BLOB ${bytes(row[i].length)}>`:String(row[i]??'NULL'))}</strong></div>`).join('')}</div></div><div class="inspect-section" style="margin-top:12px"><h3>${esc(tr('recordRelationships'))}</h3><div class="related-list">${items.length?items.map((x,i)=>`<div class="related-item"><div class="related-head"><strong>${esc(x.direction)} · ${esc(x.targetTable)}.${esc(x.targetColumn)}</strong><span class="related-count">${fmt(x.count)}</span></div><p class="related-desc">${x.rel.kind==='inferred'?`${esc(tr('inferred'))} ${Math.round(x.rel.confidence*100)}%`:esc(tr('defined'))} · ${esc(String(x.value))}</p><button class="related-open" type="button" data-related-index="${i}">${esc(tr('openRelated'))} →</button></div>`).join(''):`<div class="empty-state"><p>${esc(tr('noRelated'))}</p></div>`}</div></div>`;$$('[data-related-index]').forEach(b=>b.onclick=async()=>{const x=items[Number(b.dataset.relatedIndex)],q=String(x.value);$('#recordDialog').close();await selectTable(x.targetTable,false);state.rowFilter=q;$('#rowFilterInput').value=q;state.page=0;await renderTableData(false)});$('#recordDialog').showModal()}
-    function stripLeadingComments(sql){return sql.replace(/^\s*(?:--[^\n]*\n|\/\*[\s\S]*?\*\/\s*)*/,'').trim()}
-    function isReadOnly(sql){
-      const s=stripLeadingComments(sql);
-      const scrubbed=s
-        .replace(/--[^\n]*(?:\n|$)/g,' ')
-        .replace(/\/\*[\s\S]*?\*\//g,' ')
-        .replace(/'(?:''|[^'])*'/g,"''")
-        .replace(/\"(?:\"\"|[^\"])*\"/g,'""');
-      const body=scrubbed.replace(/;\s*$/,'');
-      if(body.includes(';'))return false;
-      if(/\b(insert|update|delete|replace|create|drop|alter|vacuum|attach|detach|reindex|analyze)\b/i.test(body))return false;
-      if(/^(select|with|explain)\b/i.test(body))return true;
-      const m=body.match(/^pragma\s+([a-z_]+)/i);
-      if(!m||body.includes('='))return false;
-      return new Set(['table_info','table_xinfo','foreign_key_list','index_list','index_info','integrity_check','quick_check','compile_options','database_list','page_count','page_size','encoding','user_version','schema_version']).has(m[1].toLowerCase())
+    function openRecordRelationships(columns,row){
+      const table=state.selectedTable,obj=Object.fromEntries(columns.map((c,i)=>[c,row[i]])),items=[];
+      for(const rel of relationCandidatesForTable(table)){
+        const parts=rel.parts||[rel];
+        if(rel.parts&&rel.fromColumn!==parts[0].fromColumn)continue;
+        const directions=[];
+        if(rel.fromTable===table)directions.push(true);
+        if(rel.toTable===table)directions.push(false);
+        for(const outgoing of directions){
+          const targetTable=outgoing?rel.toTable:rel.fromTable;
+          const targetColumns=parts.map(p=>outgoing?p.toColumn:p.fromColumn);
+          const values=parts.map(p=>obj[outgoing?p.fromColumn:p.toColumn]);
+          if(targetColumns.some(c=>c===null)||values.some(v=>v===null||v===undefined))continue;
+          const where=' WHERE '+targetColumns.map((c,i)=>`${qi(c)} = ${typeof values[i]==='bigint'?'+CAST(? AS INTEGER)':'?'}`).join(' AND ');
+          const filter={where,params:values};
+          try{
+            const count=Number(scalar(`SELECT COUNT(*) FROM ${qi(targetTable)}${where}`,values))||0;
+            if(count)items.push({rel,targetTable,targetColumn:targetColumns.join(', '),value:values.map(String).join(' · '),count,direction:tr(outgoing?'outgoing':'incoming'),filter});
+          }catch{}
+        }
+      }
+      $('#recordDialogBody').innerHTML=`<div class="inspect-section"><h3>${esc(table)}</h3><div class="record-fields">${columns.map((c,i)=>`<div class="record-field"><span>${esc(c)}</span><strong title="${esc(String(row[i]??'NULL'))}">${esc(row[i] instanceof Uint8Array?`<BLOB ${bytes(row[i].length)}>`:String(row[i]??'NULL'))}</strong></div>`).join('')}</div></div><div class="inspect-section" style="margin-top:12px"><h3>${esc(tr('recordRelationships'))}</h3><div class="related-list">${items.length?items.map((x,i)=>`<div class="related-item"><div class="related-head"><strong>${esc(x.direction)} · ${esc(x.targetTable)}.${esc(x.targetColumn)}</strong><span class="related-count">${fmt(x.count)}</span></div><p class="related-desc">${x.rel.kind==='inferred'?`${esc(tr('inferred'))} ${Math.round(x.rel.confidence*100)}%`:esc(tr('defined'))} · ${esc(String(x.value))}</p><button class="related-open" type="button" data-related-index="${i}">${esc(tr('openRelated'))} →</button></div>`).join(''):`<div class="empty-state"><p>${esc(tr('noRelated'))}</p></div>`}</div></div>`;$$('[data-related-index]').forEach(b=>b.onclick=async()=>{const x=items[Number(b.dataset.relatedIndex)],q=String(x.value);$('#recordDialog').close();await selectTable(x.targetTable,false);clearTimeout(state.filterTimer);state.relatedFilter=x.filter;state.rowFilter=q;$('#rowFilterInput').value=q;state.page=0;await renderTableData(false)});$('#recordDialog').showModal()}
+    function sqlTokens(sql){
+      // Match quotes and comments together so their contents never become SQL tokens.
+      return (sql.match(/--[^\n]*|\/\*[\s\S]*?(?:\*\/|$)|'(?:''|[^'])*'|"(?:""|[^"])*"|`(?:``|[^`])*`|\[[^\]]*\]|[a-z_\u0080-\uffff][\w$\u0080-\uffff]*|\d+|[^\s]/gi)||[])
+        .filter(token=>!token.startsWith('--')&&!token.startsWith('/*'))
+        .map(token=>token.toLowerCase());
     }
-    function isPlannable(sql){const s=stripLeadingComments(sql);return /^(select|with)\b/i.test(s)}
+    const readPragmas=new Set(['table_info','table_xinfo','foreign_key_list','foreign_key_check','index_list','index_info','integrity_check','quick_check','compile_options','database_list','page_count','page_size','encoding','user_version','schema_version']);
+    const argumentPragmas=new Set(['table_info','table_xinfo','foreign_key_list','foreign_key_check','index_list','index_info','integrity_check','quick_check']);
+    function isReadOnly(sql){
+      const tokens=sqlTokens(sql);
+      if(tokens.at(-1)===';')tokens.pop();
+      if(tokens.includes(';'))return false;
+      if(tokens[0]==='explain'){
+        tokens.shift();
+        if(tokens[0]==='query'&&tokens[1]==='plan')tokens.splice(0,2);
+      }
+      if(tokens[0]==='select')return true;
+      if(tokens[0]==='with'){
+        let depth=0;
+        for(let i=1;i<tokens.length;i++){
+          if(tokens[i]==='(')depth++;
+          else if(tokens[i]===')'&&--depth===0){
+            const next=tokens[i+1];
+            // A CTE column list is followed by AS, and another CTE by a comma.
+            if(next==='as'||next===',')continue;
+            return next==='select'||next==='values';
+          }
+        }
+      }
+      if(tokens.shift()!=='pragma')return false;
+      if(tokens[1]==='.')tokens.splice(0,2);
+      const pragma=tokens.shift()?.replace(/^["`'\[]|["`'\]]$/g,'');
+      if(!readPragmas.has(pragma))return false;
+      if(!tokens.length)return true;
+      if(!argumentPragmas.has(pragma))return false;
+      const argument=tokens[0]==='('?tokens.slice(1,-1):tokens.slice(1);
+      const wrapped=tokens[0]==='('?tokens.at(-1)===')':tokens[0]==='=';
+      return wrapped&&(argument.length===1
+        ||(argument.length===2&&['+','-'].includes(argument[0])&&/^\d+$/.test(argument[1])));
+    }
+    function isPlannable(sql){return ['select','with'].includes(sqlTokens(sql)[0])}
     function runSql(){
       if(!state.db)return;const sql=$('#queryEditor').value.trim();if(!sql)return;clearQueryResults();if(!isReadOnly(sql)){showQueryError(tr('blockedQuery'));return}const started=performance.now();
-      try{const result=resultRows(state.db.exec(sql));state.lastQuery=result;const elapsed=performance.now()-started;$('#queryTime').textContent=`${elapsed.toFixed(1)} ms`;renderQueryResults();renderQueryPlan(sql);toast(tr('queryDone'))}catch(err){showQueryError(err.message)}
+      try{const result=resultRows(state.db.exec(sql,undefined,integerOptions));state.lastQuery=result;const elapsed=performance.now()-started;$('#queryTime').textContent=`${elapsed.toFixed(1)} ms`;renderQueryResults();renderQueryPlan(sql);toast(tr('queryDone'))}catch(err){showQueryError(err.message)}
     }
     function hasDuplicateColumns(columns){return new Set(columns).size!==columns.length}
     function renderQueryResults(){
@@ -569,20 +689,35 @@ ORDER BY type, name;</textarea>
     function renderQueryPlan(sql){const box=$('#queryPlan');if(!isPlannable(sql)){box.innerHTML=`<div class="empty-state"><p>${esc(tr('planEmpty'))}</p></div>`;return}try{const plan=objectRows(`EXPLAIN QUERY PLAN ${sql}`);box.innerHTML=plan.length?plan.map(p=>`<div class="plan-item">${esc(p.detail??Object.values(p).join(' · '))}</div>`).join(''):`<div class="empty-state"><p>—</p></div>`}catch(err){box.innerHTML=`<div class="error-box">${esc(err.message)}</div>`}}
     function csvValue(v){if(v===null)return'';if(v instanceof Uint8Array)return`<BLOB ${v.length} bytes>`;const s=String(v);return/[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s}
     function download(name,mime,text){const url=URL.createObjectURL(new Blob([text],{type:mime}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast(tr('exported'))}
-    function exportRows(name,format,data){if(!data?.columns.length)return;if(format==='csv'){const txt='\uFEFF'+[data.columns.map(csvValue).join(','),...data.rows.map(r=>r.map(csvValue).join(','))].join('\r\n');download(`${name}.csv`,'text/csv;charset=utf-8',txt)}else{if(hasDuplicateColumns(data.columns)){toast(tr('duplicateQueryColumns'));return}const arr=data.rows.map(r=>Object.fromEntries(data.columns.map((c,i)=>[c,r[i] instanceof Uint8Array?`<BLOB ${r[i].length} bytes>`:r[i]])));download(`${name}.json`,'application/json;charset=utf-8',JSON.stringify(arr,null,2))}}
-    function exportCurrentTable(format){if(!state.selectedTable)return;try{const r=execRows(`SELECT * FROM ${qi(state.selectedTable)}`);exportRows(state.selectedTable,format,r)}catch(err){toast(err.message)}}
-    function runQuickCheck(){if(!state.db)return;loading(true,'Database Health');setTimeout(()=>{try{buildHealth(true);toast(state.health?.quick===false?tr('quickCheckFail'):tr('quickCheckOk'))}catch(err){toast(err.message)}finally{loading(false)}},20)}
-    function resetFile(){try{state.db?.close()}catch{}state.db=null;clearQueryResults();state.file=null;state.tables=[];state.views=[];state.indexes=[];state.tableMeta.clear();state.rowCounts.clear();state.explicitRelations=[];state.inferredRelations=[];state.selectedTable=null;state.rowFilter='';state.sortColumn='';state.sortDir='';state.visibleColumns.clear();state.globalSearchHits=[];state.health=null;$('#globalSearchInput').value='';$('#globalSearchResults').innerHTML='';$('#workspace').hidden=true;$('#dropzone').hidden=false;$('#mobileNav').hidden=true;$('#headerFile').hidden=true;$('#mobileFilebar').hidden=true;$('#fileInput').value=''}
+    function exportRows(name,format,data){if(!data?.columns.length)return;if(format==='csv'){const txt='\uFEFF'+[data.columns.map(csvValue).join(','),...data.rows.map(r=>r.map(csvValue).join(','))].join('\r\n');download(`${name}.csv`,'text/csv;charset=utf-8',txt)}else{if(hasDuplicateColumns(data.columns)){toast(tr('duplicateQueryColumns'));return}const arr=data.rows.map(r=>Object.fromEntries(data.columns.map((c,i)=>[c,r[i] instanceof Uint8Array?`<BLOB ${r[i].length} bytes>`:r[i]])));download(`${name}.json`,'application/json;charset=utf-8',JSON.stringify(arr,(_key,value)=>typeof value==='bigint'?String(value):value,2))}}
+    function exportCurrentTable(format){if(!state.selectedTable||!state.currentTableData)return;try{const r=execRows(`SELECT * FROM ${qi(state.selectedTable)}`);exportRows(state.selectedTable,format,r)}catch(err){toast(err.message)}}
+    function runQuickCheck(){if(!state.db)return;loading(true,'Database Health');state.healthTimer=setTimeout(()=>{try{buildHealth(true);toast(state.health?.quick===false?tr('quickCheckFail'):tr('quickCheckOk'))}catch(err){toast(err.message)}finally{loading(false)}},20)}
+    function clearTableData(){
+      clearTimeout(state.filterTimer);
+      state.currentTableData=null;
+      state.currentTableIsView=false;
+      state.relatedFilter=null;
+      $('#dataTitle').textContent=tr('dataTitle');
+      $('#dataSubtitle').textContent=$('#filterMeta').textContent=$('#pageInfo').textContent='';
+      $('#dataContainer').innerHTML=`<div class="empty-state"><strong data-i18n="selectObject">${esc(tr('selectObject'))}</strong></div>`;
+      $('#profileContainer').innerHTML=`<div class="empty-state"><strong data-i18n="selectTableTitle">${esc(tr('selectTableTitle'))}</strong></div>`;
+      $('#rowFilterInput').value=$('#tableSearch').value='';
+      $('#dataToolbar').hidden=$('#pagination').hidden=true;
+      $('#exportTableCsv').disabled=$('#exportTableJson').disabled=true;
+      $('#columnsMenu').open=false;
+      renderColumnMenu([]);
+    }
+    function resetFile(){clearTimeout(state.healthTimer);try{state.db?.close()}catch{}state.db=null;clearQueryResults();clearTableData();$('#walNotice').hidden=true;state.file=null;state.tables=[];state.views=[];state.indexes=[];state.tableMeta.clear();state.rowCounts.clear();state.explicitRelations=[];state.inferredRelations=[];state.selectedTable=null;state.rowFilter='';state.sortColumn='';state.sortDir='';state.visibleColumns.clear();state.globalSearchHits=[];state.health=null;$('#globalSearchInput').value='';$('#clearGlobalSearch').hidden=true;$('#globalSearchResults').innerHTML='';$('#workspace').hidden=true;$('#dropzone').hidden=false;$('#mobileNav').hidden=true;$('#headerFile').hidden=true;$('#mobileFilebar').hidden=true;$('#fileInput').value=''}
     function detectLang(){const stored=localStorage.getItem('sqliteExplorer.lang');if(stored==='ja'||stored==='en')return stored;return (navigator.language||'ja').toLowerCase().startsWith('ja')?'ja':'en'}
 
     setupColumnsMenu();
     $('#dataTableSelect').onchange=e=>{const opt=e.target.selectedOptions[0];selectTable(e.target.value,Boolean(opt?.dataset.viewObject))};
-    $('#runGlobalSearch').onclick=runGlobalSearch;$('#globalSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')runGlobalSearch()});$('#clearGlobalSearch').onclick=()=>{$('#globalSearchInput').value='';state.globalSearchHits=[];$('#globalSearchResults').innerHTML='';$('#clearGlobalSearch').hidden=true};$('#rowFilterInput').addEventListener('input',e=>{clearTimeout(state.filterTimer);state.filterTimer=setTimeout(()=>{state.rowFilter=e.target.value;state.page=0;renderTableData()},180)});$('#clearRowFilter').onclick=()=>{$('#rowFilterInput').value='';state.rowFilter='';state.page=0;renderTableData()};$('#resetSort').onclick=()=>{state.sortColumn='';state.sortDir='';state.page=0;renderTableData()};$('#erdFocusSelect').onchange=renderERD;$('#erdRelatedOnly').onchange=renderERD;$('#runDeepHealth').onclick=runQuickCheck;$('#closeCellDialog').onclick=()=>$('#cellDialog').close();$('#closeRecordDialog').onclick=()=>$('#recordDialog').close();$('#cellDialog').addEventListener('close',()=>{if(state.cellBlobUrl){URL.revokeObjectURL(state.cellBlobUrl);state.cellBlobUrl=null}});
+    $('#runGlobalSearch').onclick=runGlobalSearch;$('#globalSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')runGlobalSearch()});$('#clearGlobalSearch').onclick=()=>{state.searchRequest++;$('#globalSearchInput').value='';state.globalSearchHits=[];$('#globalSearchResults').innerHTML='';$('#clearGlobalSearch').hidden=true};$('#rowFilterInput').addEventListener('input',e=>{clearTimeout(state.filterTimer);state.filterTimer=setTimeout(()=>{state.relatedFilter=null;state.rowFilter=e.target.value;state.page=0;renderTableData()},180)});$('#clearRowFilter').onclick=()=>{clearTimeout(state.filterTimer);state.relatedFilter=null;$('#rowFilterInput').value='';state.rowFilter='';state.page=0;renderTableData()};$('#resetSort').onclick=()=>{state.sortColumn='';state.sortDir='';state.page=0;renderTableData()};$('#erdFocusSelect').onchange=renderERD;$('#erdRelatedOnly').onchange=renderERD;$('#runDeepHealth').onclick=runQuickCheck;$('#closeCellDialog').onclick=()=>$('#cellDialog').close();$('#closeRecordDialog').onclick=()=>$('#recordDialog').close();$('#cellDialog').addEventListener('close',()=>{if(state.cellBlobUrl){URL.revokeObjectURL(state.cellBlobUrl);state.cellBlobUrl=null}});
     ['#cellDialog','#recordDialog'].forEach(selector=>{const dialog=$(selector);dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close()})});
     $('#chooseFile').onclick=()=>$('#fileInput').click();$('#fileInput').onchange=e=>e.target.files[0]&&openFile(e.target.files[0]);['dragenter','dragover'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.add('dragover')}));['dragleave','drop'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.remove('dragover')}));$('#dropzone').addEventListener('drop',e=>e.dataTransfer.files[0]&&openFile(e.dataTransfer.files[0]));
     $$('.nav-button,.mobile-nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));$('#tableSearch').addEventListener('input',renderNavigation);$('#prevPage').onclick=()=>{state.page=Math.max(0,state.page-1);renderTableData()};$('#nextPage').onclick=()=>{state.page++;renderTableData()};
     $$('.schema-tab').forEach(b=>b.onclick=()=>{$$('.schema-tab').forEach(x=>x.classList.toggle('active',x===b));$$('.schema-panel').forEach(p=>p.classList.toggle('active',p.id===`schema-${b.dataset.schemaPanel}`));if(b.dataset.schemaPanel==='diagram')renderERD()});
-    $('#analyzeTableSelect').onchange=e=>{state.selectedTable=e.target.value;profileTable(e.target.value);renderNavigation()};$('#runQuery').onclick=runSql;$('#queryEditor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runSql()}if(e.key==='Tab'){e.preventDefault();const t=e.target,s=t.selectionStart;t.value=t.value.slice(0,s)+'  '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+2}});
+    $('#analyzeTableSelect').onchange=e=>profileTable(e.target.value);$('#runQuery').onclick=runSql;$('#queryEditor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runSql()}if(e.key==='Tab'){e.preventDefault();const t=e.target,s=t.selectionStart;t.value=t.value.slice(0,s)+'  '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+2}});
     $('#queryPrevPage').onclick=()=>changeQueryPage(-1);$('#queryNextPage').onclick=()=>changeQueryPage(1);
     $('#exportQueryCsv').onclick=()=>exportRows('query-result','csv',state.lastQuery);$('#exportQueryJson').onclick=()=>exportRows('query-result','json',state.lastQuery);$('#exportTableCsv').onclick=()=>exportCurrentTable('csv');$('#exportTableJson').onclick=()=>exportCurrentTable('json');$('#runQuickCheck').onclick=runQuickCheck;
     $('#replaceFileHeader').onclick=resetFile;$('#replaceFileMobile').onclick=resetFile;$('#languageButton').onclick=()=>applyLanguage(state.lang==='ja'?'en':'ja');$('#helpButton').onclick=()=>$('#helpDialog').showModal();$('#closeHelpButton').onclick=()=>$('#helpDialog').close();$('#helpDialog').addEventListener('click',e=>{if(e.target===$('#helpDialog'))$('#helpDialog').close()});
