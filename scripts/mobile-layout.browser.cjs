@@ -155,9 +155,9 @@ async function main() {
           const box = await badge.boundingBox(), text = await page.locator('[data-i18n="localBadge"]').boundingBox();
           assert.ok(box && text && box.x >= 0 && box.x + box.width <= width + 1 && text.x >= box.x && text.x + text.width <= box.x + box.width + 1, label + ': local-processing badge fits');
         }
-        const titleSize = await page.locator('#brandName').evaluate(el => getComputedStyle(el).fontSize);
+        const titleGeometry = await page.locator('#brandName').evaluate(el => { const r = el.getBoundingClientRect(); return { width:r.width, height:r.height, font:getComputedStyle(el).fontFamily, language:el.lang }; });
         await page.locator(LANGUAGE).click();
-        assert.equal(await page.locator('#brandName').evaluate(el => getComputedStyle(el).fontSize), titleSize, label + ': brand font size across languages');
+        assert.deepEqual(await page.locator('#brandName').evaluate(el => { const r = el.getBoundingClientRect(); return { width:r.width, height:r.height, font:getComputedStyle(el).fontFamily, language:el.lang }; }), titleGeometry, label + ': brand rendering across languages');
         await page.locator(LANGUAGE).click();
         await exerciseActions(page, width, height, label);
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label + ': page width');
