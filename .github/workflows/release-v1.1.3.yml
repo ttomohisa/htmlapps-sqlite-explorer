@@ -42,6 +42,7 @@ jobs:
             throw "Tag $tag exists on another commit without a release."
           }
           "release=true" >> $env:GITHUB_OUTPUT
+          exit 0
       - name: Build and verify standalone files
         if: steps.version.outputs.release == 'true'
         shell: pwsh
